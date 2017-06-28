@@ -3,5 +3,6 @@ defmodule CalendricalTest do
   doctest Calendrical
   doctest Calendrical.Kday
   doctest Calendrical.Math
+  doctest Calendrical.JulianDay
 
 end

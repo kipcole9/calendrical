@@ -17,6 +17,14 @@
 
   * Astronomical calendar types (in a future release)
 
+## Roadmap
+
+This first release provides k-day functions in `Calendarical.Kday`.  Next few releases will add additional arithmetic calendars.  Astronomical calendars will take longer - to ensure the Astronomy calculations are correct.
+
+## Elixir Version Support
+
+`Calendrical` requires Elixir 1.5 or later.  It is tested on Elixir 1.5.0-rc.0
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:

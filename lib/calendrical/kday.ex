@@ -6,11 +6,31 @@ defmodule Calendrical.Kday do
   import Calendrical, except: [day_of_week: 1]
 
   @type day_of_the_week :: 1..7
+  @type day_names :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
   @type rata_die :: {integer, {integer, integer}}
   @type date_or_time :: Date.t | NaiveDateTime.t | rata_die
 
   @days_in_a_week 7
 
+  @doc """
+  Returns the integer representation of a day of the week.
+
+  Both an atom representing the name of a day or a number between
+  1 and 7 is acceptable with 1 meaning :monday and 7 meaning :sunday.
+
+  ## Exmaples
+
+      iex(1)> Calendrical.Kday.day_cardinal :monday
+      1
+
+      iex(2)> Calendrical.Kday.day_cardinal :friday
+      5
+
+      iex(3)> Calendrical.Kday.day_cardinal 5
+      5
+
+  """
+  @spec day_cardinal(day_of_the_week | day_names) :: day_of_the_week
   def day_cardinal(:monday),    do: 1
   def day_cardinal(:tuesday),   do: 2
   def day_cardinal(:wednesday), do: 3
@@ -25,9 +45,10 @@ defmodule Calendrical.Kday do
 
   ## Example
 
-    iex> Calendrical.Kday.weeks(2)
-    14
+      iex> Calendrical.Kday.weeks(2)
+      14
   """
+  @spec weeks(integer) :: integer
   def weeks(n) do
     n * @days_in_a_week
   end
@@ -39,19 +60,20 @@ defmodule Calendrical.Kday do
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
-    See `Calendrical.days/0`
+    See `Calendrical.Kday.day_cardinal/1`
 
   ## Examples
 
-    iex> Calendrical.Kday.kday_on_or_before(~D[2016-02-29], :tuesday)
-    ~D[2016-02-23]
+      iex> Calendrical.Kday.kday_on_or_before(~D[2016-02-29], :tuesday)
+      ~D[2016-02-23]
 
-    iex> Calendrical.Kday.kday_on_or_before(~D[2017-11-30], :monday)
-    ~D[2017-11-27]
+      iex> Calendrical.Kday.kday_on_or_before(~D[2017-11-30], :monday)
+      ~D[2017-11-27]
 
-    # 6 means Saturday.  Use either the integer value or the atom form.
-    iex> Calendrical.Kday.kday_on_or_before(~D[2017-06-30], 6)
-    ~D[2017-06-24]
+      # 6 means Saturday.  Use either the integer value or the atom form.
+      iex> Calendrical.Kday.kday_on_or_before(~D[2017-06-30], 6)
+      ~D[2017-06-24]
+
   """
   @spec kday_on_or_before(date_or_time, day_of_the_week) :: date_or_time
   def kday_on_or_before(%Date{calendar: calendar} = date, k)
@@ -82,19 +104,20 @@ defmodule Calendrical.Kday do
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
-    See `Calendrical.days/0`
+    See `Calendrical.Kday.day_cardinal/1`
 
   ## Examples
 
-    iex> Calendrical.Kday.kday_on_or_after(~D[2016-02-29], :tuesday)
-    ~D[2016-03-01]
+      iex> Calendrical.Kday.kday_on_or_after(~D[2016-02-29], :tuesday)
+      ~D[2016-03-01]
 
-    iex> Calendrical.Kday.kday_on_or_after(~D[2017-11-30], :monday)
-    ~D[2017-12-04]
+      iex> Calendrical.Kday.kday_on_or_after(~D[2017-11-30], :monday)
+      ~D[2017-12-04]
 
-    # 6 means Saturday.  Use either the integer value or the atom form.
-    iex> Calendrical.Kday.kday_on_or_after(~D[2017-06-30], 6)
-    ~D[2017-07-01]
+      # 6 means Saturday.  Use either the integer value or the atom form.
+      iex> Calendrical.Kday.kday_on_or_after(~D[2017-06-30], 6)
+      ~D[2017-07-01]
+
   """
   @spec kday_on_or_after(date_or_time(), day_of_the_week) :: date_or_time()
   def kday_on_or_after(%Date{calendar: calendar} = date, k)
@@ -124,20 +147,22 @@ defmodule Calendrical.Kday do
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
-    See `Calendrical.days/0`
+    See `Calendrical.Kday.day_cardinal/1`
 
   ## Examples
 
-    iex> Calendrical.Kday.kday_nearest(~D[2016-02-29], :tuesday)
-    ~D[2016-03-01]
+      iex> Calendrical.Kday.kday_nearest(~D[2016-02-29], :tuesday)
+      ~D[2016-03-01]
 
-    iex> Calendrical.Kday.kday_nearest(~D[2017-11-30], :monday)
-    ~D[2017-11-27]
+      iex> Calendrical.Kday.kday_nearest(~D[2017-11-30], :monday)
+      ~D[2017-11-27]
 
-    # 6 means Saturday.  Use either the integer value or the atom form.
-    iex> Calendrical.Kday.kday_nearest(~D[2017-06-30], 6)
-    ~D[2017-07-01]
+      # 6 means Saturday.  Use either the integer value or the atom form.
+      iex> Calendrical.Kday.kday_nearest(~D[2017-06-30], 6)
+      ~D[2017-07-01]
+
   """
+  @spec kday_nearest(date_or_time, day_of_the_week) :: date_or_time
   def kday_nearest(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
@@ -165,20 +190,22 @@ defmodule Calendrical.Kday do
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
-    See `Calendrical.days/0`
+    See `Calendrical.Kday.day_cardinal/1`
 
   ## Examples
 
-    iex> Calendrical.Kday.kday_before(~D[2016-02-29], :tuesday)
-    ~D[2016-02-23]
+      iex> Calendrical.Kday.kday_before(~D[2016-02-29], :tuesday)
+      ~D[2016-02-23]
 
-    iex> Calendrical.Kday.kday_before(~D[2017-11-30], :monday)
-    ~D[2017-11-27]
+      iex> Calendrical.Kday.kday_before(~D[2017-11-30], :monday)
+      ~D[2017-11-27]
 
-    # 6 means Saturday.  Use either the integer value or the atom form.
-    iex> Calendrical.Kday.kday_before(~D[2017-06-30], 6)
-    ~D[2017-06-24]
+      # 6 means Saturday.  Use either the integer value or the atom form.
+      iex> Calendrical.Kday.kday_before(~D[2017-06-30], 6)
+      ~D[2017-06-24]
+
   """
+  @spec kday_before(date_or_time, day_of_the_week) :: date_or_time
   def kday_before(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
@@ -206,20 +233,22 @@ defmodule Calendrical.Kday do
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
-    See `Calendrical.days/0`
+    See `Calendrical.Kday.day_cardinal/1`
 
   ## Examples
 
-    iex> Calendrical.Kday.kday_after(~D[2016-02-29], :tuesday)
-    ~D[2016-03-01]
+      iex> Calendrical.Kday.kday_after(~D[2016-02-29], :tuesday)
+      ~D[2016-03-01]
 
-    iex> Calendrical.Kday.kday_after(~D[2017-11-30], :monday)
-    ~D[2017-12-04]
+      iex> Calendrical.Kday.kday_after(~D[2017-11-30], :monday)
+      ~D[2017-12-04]
 
-    # 6 means Saturday.  Use either the integer value or the atom form.
-    iex> Calendrical.Kday.kday_after(~D[2017-06-30], 6)
-    ~D[2017-07-01]
+      # 6 means Saturday.  Use either the integer value or the atom form.
+      iex> Calendrical.Kday.kday_after(~D[2017-06-30], 6)
+      ~D[2017-07-01]
+
   """
+  @spec kday_after(date_or_time, day_of_the_week) :: date_or_time
   def kday_after(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
@@ -250,22 +279,24 @@ defmodule Calendrical.Kday do
     (positive `n`) the specified date
 
   * `k` is an integer or atom representation of the day of the week.
-    See `Calendrical.days/0`
+    See `Calendrical.Kday.day_cardinal/1`
 
   ## Examples
 
-    # Thanksgiving in the US
-    iex> Calendrical.Kday.nth_kday(~D[2017-11-01], 4, :tuesday)
-    ~D[2017-11-28]
+      # Thanksgiving in the US
+      iex> Calendrical.Kday.nth_kday(~D[2017-11-01], 4, :tuesday)
+      ~D[2017-11-28]
 
-    # Labor day in the US
-    iex> Calendrical.Kday.nth_kday(~D[2017-09-01], 1, :monday)
-    ~D[2017-09-04]
+      # Labor day in the US
+      iex> Calendrical.Kday.nth_kday(~D[2017-09-01], 1, :monday)
+      ~D[2017-09-04]
 
-    # Daylight savings time starts in the US
-    iex> Calendrical.Kday.nth_kday(~D[2017-03-01], 2, :sunday)
-    ~D[2017-03-12]
+      # Daylight savings time starts in the US
+      iex> Calendrical.Kday.nth_kday(~D[2017-03-01], 2, :sunday)
+      ~D[2017-03-12]
+
   """
+  @spec nth_kday(date_or_time, integer, day_of_the_week) :: date_or_time
   def nth_kday(%Date{calendar: calendar} = date, n, k)
   when (is_atom(k) or k in 1..7) and is_integer(n) do
     date
@@ -299,18 +330,20 @@ defmodule Calendrical.Kday do
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
-    See `Calendrical.days/0`
+    See `Calendrical.Kday.day_cardinal/1`
 
   ## Examples
 
-    # US election day
-    iex> Calendrical.Kday.first_kday(~D[2017-11-02], :tuesday)
-    ~D[2017-11-07]
+      # US election day
+      iex> Calendrical.Kday.first_kday(~D[2017-11-02], :tuesday)
+      ~D[2017-11-07]
 
-    # US Daylight savings end
-    iex> Calendrical.Kday.first_kday(~D[2017-11-01], :sunday)
-    ~D[2017-11-05]
+      # US Daylight savings end
+      iex> Calendrical.Kday.first_kday(~D[2017-11-01], :sunday)
+      ~D[2017-11-05]
+
   """
+  @spec first_kday(date_or_time, day_of_the_week) :: date_or_time
   def first_kday(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
@@ -338,14 +371,16 @@ defmodule Calendrical.Kday do
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
-    See `Calendrical.days/0`
+    See `Calendrical.Kday.day_cardinal/1`
 
-  ## Examples
+  ## Example
 
-    # Memorial Day in the US
-    Calendrical.Kday.last_kday(~[2017-05-31], :monday)
-    ~D[2017-05-29]
+      # Memorial Day in the US
+      Calendrical.Kday.last_kday(~[2017-05-31], :monday)
+      ~D[2017-05-29]
+
   """
+  @spec last_kday(date_or_time, day_of_the_week) :: date_or_time
   def last_kday(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date

@@ -11,9 +11,9 @@ defmodule Calendrical do
 
   Calendrical implements:
 
-  * K-Day calculations in `Calendrical.Kday`
+  * K-Day calculations in `Calendrical.Kday` (in the first release)
 
-  * Additional Arithmetic calendar types (Julian calendar in the first release)
+  * Additional Arithmetic calendar types (Julian calendar in the second release)
 
   * Astronomical calendar types (in a future release)
   """
