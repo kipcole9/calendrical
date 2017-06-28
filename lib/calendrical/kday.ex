@@ -7,7 +7,30 @@ defmodule Calendrical.Kday do
 
   @type day_of_the_week :: 1..7
   @type rata_die :: {integer, {integer, integer}}
-  @type date_or_time :: Date.t | DateTime.t | NaiveDateTime.t | rata_die
+  @type date_or_time :: Date.t | NaiveDateTime.t | rata_die
+
+  @days_in_a_week 7
+
+  def day_cardinal(:monday),    do: 1
+  def day_cardinal(:tuesday),   do: 2
+  def day_cardinal(:wednesday), do: 3
+  def day_cardinal(:thursday),  do: 4
+  def day_cardinal(:friday),    do: 5
+  def day_cardinal(:saturday),  do: 6
+  def day_cardinal(:sunday),    do: 7
+  def day_cardinal(day_number) when day_number in 1..@days_in_a_week, do: day_number
+
+  @doc """
+  Returns the number of days in `n` weeks
+
+  ## Example
+
+    iex> Calendrical.Kday.weeks(2)
+    14
+  """
+  def weeks(n) do
+    n * @days_in_a_week
+  end
 
   @doc """
   Return the date of the `day_of_the_week` on or before the
@@ -29,36 +52,21 @@ defmodule Calendrical.Kday do
     # 6 means Saturday.  Use either the integer value or the atom form.
     iex> Calendrical.Kday.kday_on_or_before(~D[2017-06-30], 6)
     ~D[2017-06-24]
-
-    # Datetimes return a different date with the original time
-    iex> datetime = %DateTime{year: 2017, month: 06, day: 30, hour: 12, minute: 5, second: 0, time_zone: "Etc/UTC", zone_abbr: "UTC", utc_offset: 0, std_offset: 0}
-    iex> Calendrical.Kday.kday_on_or_before(datetime, 6)
-    %DateTime{calendar: Calendar.ISO, day: 24, hour: 12, microsecond: {0, 6},
-     minute: 5, month: 6, second: 0, std_offset: 0, time_zone: "Etc/UTC",
-     utc_offset: 0, year: 2017, zone_abbr: "UTC"}
   """
   @spec kday_on_or_before(date_or_time, day_of_the_week) :: date_or_time
   def kday_on_or_before(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> date_to_rata_die
-    |> kday_on_or_before(days(k))
+    |> kday_on_or_before(day_cardinal(k))
     |> date_from_rata_die(calendar)
-  end
-
-  def kday_on_or_before(%DateTime{calendar: calendar} = datetime, k)
-  when is_atom(k) or k in 1..7 do
-    datetime
-    |> datetime_to_rata_die
-    |> kday_on_or_before(days(k))
-    |> datetime_from_rata_die(calendar)
   end
 
   def kday_on_or_before(%NaiveDateTime{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_on_or_before(days(k))
+    |> kday_on_or_before(day_cardinal(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -87,36 +95,21 @@ defmodule Calendrical.Kday do
     # 6 means Saturday.  Use either the integer value or the atom form.
     iex> Calendrical.Kday.kday_on_or_after(~D[2017-06-30], 6)
     ~D[2017-07-01]
-
-    # Datetimes return a different date with the original time
-    iex> datetime = %DateTime{year: 2017, month: 06, day: 30, hour: 12, minute: 5, second: 0, time_zone: "Etc/UTC", zone_abbr: "UTC", utc_offset: 0, std_offset: 0}
-    iex> Calendrical.Kday.kday_on_or_after(datetime, 6)
-    %DateTime{calendar: Calendar.ISO, day: 1, hour: 12, microsecond: {0, 6},
-     minute: 5, month: 7, second: 0, std_offset: 0, time_zone: "Etc/UTC",
-     utc_offset: 0, year: 2017, zone_abbr: "UTC"}
   """
   @spec kday_on_or_after(date_or_time(), day_of_the_week) :: date_or_time()
   def kday_on_or_after(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> date_to_rata_die
-    |> kday_on_or_after(days(k))
+    |> kday_on_or_after(day_cardinal(k))
     |> date_from_rata_die(calendar)
-  end
-
-  def kday_on_or_after(%DateTime{calendar: calendar} = datetime, k)
-  when is_atom(k) or k in 1..7 do
-    datetime
-    |> datetime_to_rata_die
-    |> kday_on_or_after(days(k))
-    |> datetime_from_rata_die(calendar)
   end
 
   def kday_on_or_after(%NaiveDateTime{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_on_or_after(days(k))
+    |> kday_on_or_after(day_cardinal(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -144,35 +137,20 @@ defmodule Calendrical.Kday do
     # 6 means Saturday.  Use either the integer value or the atom form.
     iex> Calendrical.Kday.kday_nearest(~D[2017-06-30], 6)
     ~D[2017-07-01]
-
-    # Datetimes return a different date with the original time
-    iex> datetime = %DateTime{year: 2017, month: 06, day: 30, hour: 12, minute: 5, second: 0, time_zone: "Etc/UTC", zone_abbr: "UTC", utc_offset: 0, std_offset: 0}
-    iex> Calendrical.Kday.kday_nearest(datetime, 6)
-    %DateTime{calendar: Calendar.ISO, day: 1, hour: 12, microsecond: {0, 6},
-     minute: 5, month: 7, second: 0, std_offset: 0, time_zone: "Etc/UTC",
-     utc_offset: 0, year: 2017, zone_abbr: "UTC"}
   """
   def kday_nearest(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> date_to_rata_die
-    |> kday_nearest(days(k))
+    |> kday_nearest(day_cardinal(k))
     |> date_from_rata_die(calendar)
-  end
-
-  def kday_nearest(%DateTime{calendar: calendar} = datetime, k)
-  when is_atom(k) or k in 1..7 do
-    datetime
-    |> datetime_to_rata_die
-    |> kday_nearest(days(k))
-    |> datetime_from_rata_die(calendar)
   end
 
   def kday_nearest(%NaiveDateTime{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_nearest(days(k))
+    |> kday_nearest(day_cardinal(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -200,35 +178,20 @@ defmodule Calendrical.Kday do
     # 6 means Saturday.  Use either the integer value or the atom form.
     iex> Calendrical.Kday.kday_before(~D[2017-06-30], 6)
     ~D[2017-06-24]
-
-    # Datetimes return a different date with the original time
-    iex> datetime = %DateTime{year: 2017, month: 06, day: 30, hour: 12, minute: 5, second: 0, time_zone: "Etc/UTC", zone_abbr: "UTC", utc_offset: 0, std_offset: 0}
-    iex> Calendrical.Kday.kday_before(datetime, 6)
-    %DateTime{calendar: Calendar.ISO, day: 24, hour: 12, microsecond: {0, 6},
-     minute: 5, month: 6, second: 0, std_offset: 0, time_zone: "Etc/UTC",
-     utc_offset: 0, year: 2017, zone_abbr: "UTC"}
   """
   def kday_before(%Date{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> date_to_rata_die
-    |> kday_before(days(k))
+    |> kday_before(day_cardinal(k))
     |> date_from_rata_die(calendar)
-  end
-
-  def kday_before(%DateTime{calendar: calendar} = datetime, k)
-  when is_atom(k) or k in 1..7 do
-    datetime
-    |> datetime_to_rata_die
-    |> kday_before(days(k))
-    |> datetime_from_rata_die(calendar)
   end
 
   def kday_before(%NaiveDateTime{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_before(days(k))
+    |> kday_before(day_cardinal(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -261,23 +224,15 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> date_to_rata_die
-    |> kday_after(days(k))
+    |> kday_after(day_cardinal(k))
     |> date_from_rata_die(calendar)
-  end
-
-  def kday_after(%DateTime{calendar: calendar} = datetime, k)
-  when is_atom(k) or k in 1..7 do
-    datetime
-    |> datetime_to_rata_die
-    |> kday_after(days(k))
-    |> datetime_from_rata_die(calendar)
   end
 
   def kday_after(%NaiveDateTime{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_after(days(k))
+    |> kday_after(day_cardinal(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -315,23 +270,15 @@ defmodule Calendrical.Kday do
   when (is_atom(k) or k in 1..7) and is_integer(n) do
     date
     |> date_to_rata_die
-    |> nth_kday(n, days(k))
+    |> nth_kday(n, day_cardinal(k))
     |> date_from_rata_die(calendar)
-  end
-
-  def nth_kday(%DateTime{calendar: calendar} = datetime, n, k)
-  when (is_atom(k) or k in 1..7) and is_integer(n) do
-    datetime
-    |> datetime_to_rata_die
-    |> nth_kday(n, days(k))
-    |> datetime_from_rata_die(calendar)
   end
 
   def nth_kday(%NaiveDateTime{calendar: calendar} = date, n, k)
   when (is_atom(k) or k in 1..7) and is_integer(n) do
     date
     |> naive_datetime_to_rata_die
-    |> nth_kday(n, days(k))
+    |> nth_kday(n, day_cardinal(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -368,23 +315,15 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> date_to_rata_die
-    |> first_kday(days(k))
+    |> first_kday(day_cardinal(k))
     |> date_from_rata_die(calendar)
-  end
-
-  def first_kday(%DateTime{calendar: calendar} = datetime, k)
-  when is_atom(k) or k in 1..7 do
-    datetime
-    |> datetime_to_rata_die
-    |> first_kday(days(k))
-    |> datetime_from_rata_die(calendar)
   end
 
   def first_kday(%NaiveDateTime{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> first_kday(days(k))
+    |> first_kday(day_cardinal(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -411,23 +350,15 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> date_to_rata_die
-    |> last_kday(days(k))
+    |> last_kday(day_cardinal(k))
     |> date_from_rata_die(calendar)
-  end
-
-  def last_kday(%DateTime{calendar: calendar} = datetime, k)
-  when is_atom(k) or k in 1..7 do
-    datetime
-    |> datetime_to_rata_die
-    |> last_kday(days(k))
-    |> datetime_from_rata_die(calendar)
   end
 
   def last_kday(%NaiveDateTime{calendar: calendar} = date, k)
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> last_kday(days(k))
+    |> last_kday(day_cardinal(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
