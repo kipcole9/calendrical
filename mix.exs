@@ -34,7 +34,7 @@ defmodule Calendrical.Mixfile do
   end
   defp description do
     "Calendrical calculations and additional calendars based upon the work of Dershowitz " <>
-    "and Rheingold in Calendrical Calculations"
+    "and Reingold in Calendrical Calculations"
   end
 
   defp package do
