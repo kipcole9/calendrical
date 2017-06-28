@@ -1,10 +1,21 @@
 # Calendrical
 
-`Calendrical` builds on Elixir's `Calendar` conversion capabilities introduced in Elixir 1.5.  It provides:
+  `Calendrical ` provides calendar-related functions that build upon the
+  conversion capabilities of `Calendar` available in Elixir from verison 1.5.0.
 
-* So-called k-day functions that can be used to find days of the week relative to a date.  For example, the "first tuesday in november" would be `Calendrical.Kday.first_kday(~D[2017-11-01], :tuesday)`
+  The conversion mechanism is based upon the definition of `rata die` as described
+  in [Calendrical Calculations](https://www.amazon.com/Calendrical-Calculations-Nachum-Dershowitz/dp/0521702380)
+  by Dershowitz and Rheingold.  This `rata die` gives a numberical value to a moment in time
+  that is idependent of any specific calendar.  As a result libraries such as `Calendrical` can
+  implement different calendars and calendar calculations in a conformant way.
 
-* Additional calendars types. Initial work is on the arithmetic calendars with work on astronomical calendars to be completed at a later date (ie when all the astronomical algorithms are in place)
+  Calendrical implements:
+
+  * K-Day calculations in `Calendrical.Kday`
+
+  * Additional Arithmetic calendar types (Julian calendar in the first release)
+
+  * Astronomical calendar types (in a future release)
 
 ## Installation
 

@@ -20,16 +20,20 @@ defmodule Calendrical.Math do
 
   ## Examples
 
-      iex> Calendrical.Math.mod(9, -5)
-      -1
-      iex> Calendrical.Math.mod(-9, 5)
-      1
-      iex> Calendrical.Math.mod(9, 5)
-      4
-      iex> Calendrical.Math.mod(-9,-5)
-      -4
-      iex> Calendrical.Math.mod(5/3, 3/4) |> Float.round(5)
-      0.16667
+    iex> Calendrical.Math.mod(9, -5)
+    -1
+
+    iex> Calendrical.Math.mod(-9, 5)
+    1
+
+    iex> Calendrical.Math.mod(9, 5)
+    4
+
+    iex> Calendrical.Math.mod(-9,-5)
+    -4
+
+    iex> Calendrical.Math.mod(5/3, 3/4) |> Float.round(5)
+    0.16667
   """
   def mod(x, y) when is_integer(x) and is_integer(y) do
     mod(x * 1.0, y) |> round
