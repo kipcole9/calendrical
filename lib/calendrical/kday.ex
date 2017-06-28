@@ -58,7 +58,7 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_on_or_before(k)
+    |> kday_on_or_before(days(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -116,7 +116,7 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_on_or_after(k)
+    |> kday_on_or_after(days(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -172,7 +172,7 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_nearest(k)
+    |> kday_nearest(days(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -228,7 +228,7 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_before(k)
+    |> kday_before(days(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -277,7 +277,7 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> kday_after(k)
+    |> kday_after(days(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -384,7 +384,7 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> first_kday(k)
+    |> first_kday(days(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
@@ -427,7 +427,7 @@ defmodule Calendrical.Kday do
   when is_atom(k) or k in 1..7 do
     date
     |> naive_datetime_to_rata_die
-    |> last_kday(k)
+    |> last_kday(days(k))
     |> naive_datetime_from_rata_die(calendar)
   end
 
