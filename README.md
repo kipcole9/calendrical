@@ -29,21 +29,21 @@ This first release provides k-day functions in `Calendarical.Kday`.  Next few re
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
 
-  1. Add `calendrical` to your list of dependencies in `mix.exs`:
+1. Add `calendrical` to your list of dependencies in `mix.exs`:
 
-    ```elixir
+```elixir
     def deps do
       [{:calendrical, "~> 0.1.0"}]
     end
-    ```
+```
 
-  2. Ensure `calendrical` is started before your application:
+2. Ensure `calendrical` is started before your application:
 
-    ```elixir
+```elixir
     def application do
       [applications: [:calendrical]]
     end
-    ```
+```
 
 If [published on HexDocs](https://hex.pm/docs/tasks#hex_docs), the docs can
 be found at [https://hexdocs.pm/calendrical](https://hexdocs.pm/calendrical)
