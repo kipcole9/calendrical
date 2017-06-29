@@ -149,7 +149,20 @@ defmodule Calendrical.Calendar.Julian do
 
   def date_to_rata_die_days(year, month, day) do
     {julian_epoch_days, _} = julian_epoch()
-    y = if year < 0, do: year + 1, else: year
+    y =
+      if year < 0 do
+        year + 1
+      else
+        year
+      end
+    end
+
+    correction =
+      cond do
+        month <= 2 -> 0
+        leap_year?(year) -> -1
+        true -> -2
+      end
 
     # Number of non-leap days from the day before the start of the
     # Julian epoch and the last day before the start of the current
@@ -158,22 +171,35 @@ defmodule Calendrical.Calendar.Julian do
 
     # plus number of days in the prior months in the current year plus
     # the corresponding number of leap days
-    (1 / 12) * (367 * month - 362) + leap_year_adjustment(year, month) +
+    (1 / 12) * (367 * month - 362) + correction +
 
     # and lastly the number of days since the start of the
     # current month
     day |> trunc
   end
 
-  defp leap_year_adjustment(year, month) do
-    cond do
-      month <= 2 -> 0
-      leap_year?(year) -> -1
-      true -> -2
-    end
-  end
+  def date_from_rata_die_days({days, time_fraction}) do
+    {julian_epoch_day, _} = julian_epoch()
+    approx = trunc(1 / 1461 * (4 * (days - julian_epoch_days)))
 
-  def date_from_rata_die_days(rata_die) do
+    year =
+      if approx <= 0 do
+        approx - 1
+      else
+        approx
+      end
 
+    correction =
+      cond do
+        date < fixed_from_julian(year, march, 1) -> 0
+        leap_year?(year) -> 1
+        true -> 2
+      end
+
+    prior_days = date - fixed_from_julian(year, jan, 1)
+
+    month = trunc(Float.floor(1 / 367 * (12 * (prior_days + correction) + 373)))
+    day = trunc(date - fixed_from_julian(year, month, 1) + 1)
+    Date.new(year, month, day, __MODULE__)
   end
 end
