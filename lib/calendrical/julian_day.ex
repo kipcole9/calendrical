@@ -48,13 +48,18 @@ defmodule Calendrical.JulianDay do
 
   ## Example
 
-      iex> Calendrical.JulianDay.date_to_jd(~D[2017-06-30])
+      iex> Calendrical.JulianDay.date_to_julian_day(~D[2017-06-30])
       2457934.5
   """
-  def date_to_jd(%Date{} = date) do
+  def date_to_julian_day(%Date{} = date) do
     date
     |> Calendrical.date_to_rata_die
-    |> jd_from_rata_die
+    |> julian_day_from_rata_die
+  end
+
+  def date_to_julian_day(year, month, day, calendar \\ Calendar.ISO) do
+    {:ok, date} = Date.new(year, month, day, calendar)
+    date_to_julian_day(date)
   end
 
   @doc """
@@ -62,13 +67,13 @@ defmodule Calendrical.JulianDay do
 
   ## Example
 
-      iex> Calendrical.JulianDay.date_from_jd(2457934.5)
+      iex> Calendrical.JulianDay.date_from_julian_day(2457934.5)
       ~D[2017-06-30]
   """
-  def date_from_jd(jd) do
-    jd
-    |> rata_die_from_jd
-    |> Calendrical.date_from_rata_die
+  def date_from_julian_day(julian_day, calendar \\ Calendar.ISO) do
+    julian_day
+    |> rata_die_from_julian_day
+    |> Calendrical.date_from_rata_die(calendar)
   end
 
   @doc """
@@ -76,13 +81,18 @@ defmodule Calendrical.JulianDay do
 
   ## Example
 
-      iex> Calendrical.JulianDay.date_to_mjd(~D[2017-06-30])
+      iex> Calendrical.JulianDay.date_to_modified_julian_day(~D[2017-06-30])
       57934.0
   """
-  def date_to_mjd(%Date{} = date) do
+  def date_to_modified_julian_day(%Date{} = date) do
     date
     |> Calendrical.date_to_rata_die
-    |> mjd_from_rata_die
+    |> modified_julian_day_from_rata_die
+  end
+
+  def date_to_modified_julian_day(year, month, day, calendar \\ Calendar.ISO) do
+    {:ok, date} = Date.new(year, month, day, calendar)
+    date_to_modified_julian_day(date)
   end
 
   @doc """
@@ -90,19 +100,19 @@ defmodule Calendrical.JulianDay do
 
   ## Example
 
-      iex> Calendrical.JulianDay.date_from_mjd(57934.0)
+      iex> Calendrical.JulianDay.date_from_modified_julian_day(57934.0)
       ~D[2017-06-30]
   """
-  def date_from_mjd(jd) do
-    jd
-    |> rata_die_from_mjd
-    |> Calendrical.date_from_rata_die
+  def date_from_modified_julian_day(julian_day, calendar \\ Calendar.ISO) do
+    julian_day
+    |> rata_die_from_modified_julian_day
+    |> Calendrical.date_from_rata_die(calendar)
   end
 
   @doc """
   Convert a rata die to a julian day
   """
-  def jd_from_rata_die({_, {_,_}} = rata_die) do
+  def julian_day_from_rata_die({_, {_,_}} = rata_die) do
     rata_die
     |> sub(jd_epoch())
     |> rata_die_to_float
@@ -111,7 +121,7 @@ defmodule Calendrical.JulianDay do
   @doc """
   Convert a julian day to a rata die
   """
-  def rata_die_from_jd(jd) do
+  def rata_die_from_julian_day(jd) do
     jd
     |> rata_die_from_float
     |> add(jd_epoch())
@@ -120,7 +130,7 @@ defmodule Calendrical.JulianDay do
   @doc """
   Convert a rata die to a modified julian day
   """
-  def mjd_from_rata_die({_, {_,_}} = rata_die)  do
+  def modified_julian_day_from_rata_die({_, {_,_}} = rata_die)  do
     rata_die
     |> sub(mjd_epoch())
     |> rata_die_to_float
@@ -129,7 +139,7 @@ defmodule Calendrical.JulianDay do
   @doc """
   Convert a modified julian day to a rata die
   """
-  def rata_die_from_mjd(mjd) do
+  def rata_die_from_modified_julian_day(mjd) do
     mjd
     |> rata_die_from_float
     |> add(mjd_epoch())

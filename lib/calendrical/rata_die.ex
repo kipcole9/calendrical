@@ -3,6 +3,8 @@ defmodule Calendrical.RataDie do
   Arithmetic and conversion functions on rata die
   """
 
+  alias Calendrical.Math
+
   @doc """
   Converts a float to a rata die
   """
@@ -84,6 +86,7 @@ defmodule Calendrical.RataDie do
   end
 
   def day_of_week({day, {_, _}}) do
-    day = rem(day, @days_in_a_week) + 1
+    weekday = Math.mod(day, @days_in_a_week)
+    if weekday == 0, do: 7, else: weekday
   end
 end

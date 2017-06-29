@@ -32,7 +32,7 @@ defmodule Calendrical do
   """
   def date_from_rata_die({_, {_, _}} = rata_die, calendar \\ Calendar.ISO) do
     {year, month, day, _, _, _, _} = calendar.naive_datetime_from_rata_die(rata_die)
-    {:ok, date} = Date.new(year, month, day)
+    {:ok, date} = Date.new(year, month, day, calendar)
     date
   end
 

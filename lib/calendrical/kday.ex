@@ -40,6 +40,14 @@ defmodule Calendrical.Kday do
   def day_cardinal(:sunday),    do: 7
   def day_cardinal(day_number) when day_number in 1..@days_in_a_week, do: day_number
 
+  def day_name(1), do: :monday
+  def day_name(2), do: :tuesday
+  def day_name(3), do: :wednesday
+  def day_name(4), do: :thursday
+  def day_name(5), do: :friday
+  def day_name(6), do: :saturday
+  def day_name(7), do: :sunday
+
   @doc """
   Returns the number of days in `n` weeks
 

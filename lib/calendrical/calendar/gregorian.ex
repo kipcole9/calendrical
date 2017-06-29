@@ -1,19 +1,17 @@
-defmodule Calendrical.Calendar.Julian do
+defmodule Calendrical.Calendar.Gregorian do
   @behaviour Calendar
   alias Calendrical.RataDie
   alias Calendrical.Math
 
-  {:ok, epoch_date} = Date.new(0, 12, 30, Calendar.ISO)
-  @julian_epoch Calendrical.date_to_rata_die(epoch_date)
-  def julian_epoch do
-    @julian_epoch
+  def gregorian_epoch do
+    {1, {0, 1}}
   end
 
   @doc """
   Returns how many days there are in the given year-month.
 
-  This is the same as `Calendar.ISO` except that the leap_year
-  calculation is different.
+  This is the same as `Calendar.ISO` except that negative
+  years are acceptable.
   """
   def days_in_month(year, month)
 
@@ -29,12 +27,8 @@ defmodule Calendrical.Calendar.Julian do
   is up to the calendar. A calendar must return `false` if it does not support
   the concept of leap years.
   """
-  def leap_year?(year) when year > 0 do
-    Math.mod(year, 4) == 0
-  end
-
-  def leap_year?(year) do
-    Math.mod(year, 4) == 3
+  def leap_year?(year) when is_integer(year) do
+    Math.mod(year, 4) === 0 and (Math.mod(year, 100) > 0 or Math.mod(year, 400) === 0)
   end
 
   @doc """
@@ -52,15 +46,14 @@ defmodule Calendrical.Calendar.Julian do
   Converts the date into a string according to the calendar.
   """
   def date_to_string(year, month, day) do
-    Calendar.ISO.date_to_string(year, month, day) <> julian_signature()
+    Calendar.ISO.date_to_string(year, month, day)
   end
 
   @doc """
   Converts the datetime (without time zone) into a string according to the calendar.
   """
   def naive_datetime_to_string(year, month, day, hour, minute, second, microsecond) do
-    Calendar.ISO.naive_datetime_to_string(year, month, day, hour, minute, second, microsecond) <>
-    julian_signature()
+    Calendar.ISO.naive_datetime_to_string(year, month, day, hour, minute, second, microsecond)
   end
 
   @doc """
@@ -144,66 +137,51 @@ defmodule Calendrical.Calendar.Julian do
   end
 
   def date_to_rata_die_days(year, month, day) do
-    y =
-      if year < 0 do
-        year + 1
-      else
-        year
-      end
-
     correction =
       cond do
         month <= 2 -> 0
         leap_year?(year) -> -1
-        true -> -2
+        true ->  -2
       end
 
-    # Number of non-leap days from the day before the start of the
-    # Julian epoch and the last day before the start of the current
-    # year
-    julian_epoch_days() - 1 + (365 * (y - 1)) + Float.floor((y - 1) / 4) +
-
-    # plus number of days in the prior months in the current year plus
-    # the corresponding number of leap days
-    Float.floor((367 * month - 362) / 12) + correction +
-
-    # and lastly the number of days since the start of the
-    # current month
-    day |> trunc
+    (gregorian_epoch_days() - 1) +
+    (365 * (year - 1)) +
+    Float.floor((year - 1) / 4) -
+    Float.floor((year - 1) / 100) +
+    Float.floor((year - 1) / 400) +
+    Float.floor((367 * month - 362) / 12) +
+    correction + day |> trunc
   end
 
-  def date_from_rata_die_days(julian_days) do
-    approx = Float.floor(((4 * (julian_days - julian_epoch_days())) + 1464) / 1461) |> trunc
-
-    year =
-      if approx <= 0 do
-        approx - 1
-      else
-        approx
-      end
+  def date_from_rata_die_days(gregorian_days) do
+    year = year_from_gregorian_days(gregorian_days)
 
     correction =
       cond do
-        julian_days < date_to_rata_die_days(year, 3, 1) -> 0
+        gregorian_days < date_to_rata_die_days(year, 3, 1) -> 0
         leap_year?(year) -> 1
         true -> 2
       end
 
-    prior_days = julian_days - date_to_rata_die_days(year, 1, 1)
+    prior_days  = gregorian_days - date_to_rata_die_days(year, 1, 1)
 
-    month = Float.floor((12 * (prior_days + correction) + 373) / 367) |> trunc
-    day = julian_days - date_to_rata_die_days(year, month, 1) + 1
+    month = Float.floor(((12 * (prior_days + correction)) + 373) / 367) |> trunc
+    day = 1 + gregorian_days - date_to_rata_die_days(year, month, 1)
     {:ok, date} = Date.new(year, month, day, __MODULE__)
     date
   end
 
-  {days, _time_fraction} = @julian_epoch
-  @days days
-  defp julian_epoch_days do
-    @days
+  def year_from_gregorian_days(gregorian_days) do
+    d0 = gregorian_days - gregorian_epoch_days()
+    {n400, d1} = Math.div_mod(d0, 146_097)
+    {n100, d2} = Math.div_mod(d1, 36_524)
+    {n4, d3}   = Math.div_mod(d2, 1_461)
+    n1         = Float.floor(d3 / 365)
+    year = trunc((400 * n400) + (100 * n100) + (4 * n4) + n1)
+    if ((n100 == 4) || (n1 == 4)), do: year, else: year + 1
   end
 
-  defp julian_signature do
-    "JUL"
+  defp gregorian_epoch_days do
+    1
   end
 end
