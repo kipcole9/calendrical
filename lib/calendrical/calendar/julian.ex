@@ -9,6 +9,12 @@ defmodule Calendrical.Calendar.Julian do
     @julian_epoch
   end
 
+  {days, time_fraction} = @julian_epoch
+  @days = days
+  defp julian_epoch_days do
+    days
+  end
+
   @doc """
   Returns how many days there are in the given year-month.
 
@@ -148,7 +154,6 @@ defmodule Calendrical.Calendar.Julian do
   end
 
   def date_to_rata_die_days(year, month, day) do
-    {julian_epoch_days, _} = julian_epoch()
     y =
       if year < 0 do
         year + 1
@@ -167,7 +172,7 @@ defmodule Calendrical.Calendar.Julian do
     # Number of non-leap days from the day before the start of the
     # Julian epoch and the last day before the start of the current
     # year
-    (julian_epoch_days - 1) + (365 * (y - 1)) + Float.floor((y - 1) / 4) +
+    (julian_epoch_days() - 1) + (365 * (y - 1)) + Float.floor((y - 1) / 4) +
 
     # plus number of days in the prior months in the current year plus
     # the corresponding number of leap days
@@ -179,8 +184,7 @@ defmodule Calendrical.Calendar.Julian do
   end
 
   def date_from_rata_die_days({days, time_fraction}) do
-    {julian_epoch_day, _} = julian_epoch()
-    approx = trunc(1 / 1461 * (4 * (days - julian_epoch_days)))
+    approx = trunc(1 / 1461 * (4 * (days - julian_epoch_days())))
 
     year =
       if approx <= 0 do
