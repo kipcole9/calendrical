@@ -66,4 +66,24 @@ defmodule Calendrical.RataDie do
     n2_a = denom / d2 * n2
     {day1 - day2, {round(n1_a - n2_a), denom}}
   end
+
+  # This day_of_week calculation returns 1..7 since
+  # Elixir uses 1 for Monday through 7 for Sunday.
+
+  @days_in_a_week 7
+  def day_of_week(%Date{} = date) do
+    date
+    |> Calendrical.date_to_naive_datetime
+    |> day_of_week
+  end
+
+  def day_of_week(%NaiveDateTime{} = datetime) do
+    datetime
+    |> Calendrical.naive_datetime_to_rata_die
+    |> day_of_week
+  end
+
+  def day_of_week({day, {_, _}}) do
+    day = rem(day, @days_in_a_week) + 1
+  end
 end

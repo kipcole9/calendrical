@@ -27,8 +27,6 @@ This first release provides k-day functions in `Calendarical.Kday`.  Next few re
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
 1. Add `calendrical` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -45,6 +43,5 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
 ```
 
-If [published on HexDocs](https://hex.pm/docs/tasks#hex_docs), the docs can
-be found at [https://hexdocs.pm/calendrical](https://hexdocs.pm/calendrical)
+The docs can be found at [https://hexdocs.pm/calendrical](https://hexdocs.pm/calendrical)
 
