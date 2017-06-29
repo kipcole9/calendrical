@@ -13,7 +13,7 @@
 
   * K-Day calculations in `Calendrical.Kday`
 
-  * Additional Arithmetic calendar types (Julian calendar in the first release)
+  * Additional Arithmetic calendar types (Gregorian and Julian calendar are in this release)
 
   * Astronomical calendar types (in a future release)
 
