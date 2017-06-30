@@ -1,5 +1,4 @@
-defmodule Calendrical.TestData do
-
+defmodule CalendricalTest.Data do
   def file(n) when n in 1..5 do
     "./test/data/dates#{n}.csv"
     |> File.stream!
