@@ -86,7 +86,6 @@ defmodule Calendrical.RataDie do
   end
 
   def day_of_week({day, {_, _}}) do
-    weekday = Math.mod(day, @days_in_a_week)
-    if weekday == 0, do: 7, else: weekday
+    Math.amod(day, @days_in_a_week)
   end
 end
