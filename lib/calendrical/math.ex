@@ -93,3 +93,51 @@ defmodule Calendrical.Math do
     x + y
   end
 end
+
+defmodule Calendrical.Math.Fraction do
+  alias Calendrical.Math
+
+
+  def sub(rd1, {i2, {n2, d2}}) when i2 < 0 do
+    add(rd1, {abs(i2), {n2, d2}})
+  end
+
+  def sub({i1, {n1, d1}}, {i2, {n2, d2}}) do
+    # Set denominator to a common multiple
+    {n1a, d1a} = {n1 * d2, d1 * d2}
+    n2a = n2 * d1
+
+    # If the first numerator is less than
+    # the second we need to borrow 1 from
+    # the whole number so when we subtract
+    # the fractions we don't get a negative
+    # numerator.
+    borrow = if n1a < n2a, do: 1, else: 0
+    n1a = if borrow == 1, do: n1a + d1a, else: n1a
+
+    # Substract the integer parts adjusting
+    # for the borrow.  Subtract the numerator
+    # of the fractional parts.
+    {days, {numerator, denominator}} = {i1 - i2 - borrow, {n1a - n2a, d1a}}
+    {days, simplify({numerator, denominator})}
+  end
+
+  def add(rd1, {i2, {n2, d2}}) when i2 < 0 do
+    sub(rd1, {abs(i2), {n2, d2}})
+  end
+
+  def add({i1, {n1, d1}}, {i2, {n2, d2}}) do
+    # Set denominator to a common multiple
+    {n1a, d1a} = {n1 * d2, d1 * d2}
+    n2a = n2 * d1
+
+    {days, {numerator, denominator}} = {i1 + i2, {n1a + n2a, d1a}}
+    {borrow, numerator} = Math.div_mod(numerator, denominator)
+    {days + borrow, simplify({numerator, denominator})}
+  end
+
+  def simplify({numerator, denominator}) do
+    gcd = Math.gcd(numerator, denominator)
+    {div(numerator, gcd), div(denominator, gcd)}
+  end
+end

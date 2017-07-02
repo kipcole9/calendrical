@@ -4,7 +4,7 @@ defmodule Calendrical.Calendar.Julian do
   alias Calendrical.Math
 
   {:ok, epoch_date} = Date.new(0, 12, 30, Calendar.ISO)
-  @julian_epoch Calendrical.date_to_rata_die(epoch_date)
+  @julian_epoch Calendrical.rata_die_from_date(epoch_date)
   def julian_epoch do
     @julian_epoch
   end
@@ -44,7 +44,7 @@ defmodule Calendrical.Calendar.Julian do
     {:ok, date} = Date.new(year, month, day, __MODULE__)
 
     date
-    |> Calendrical.date_to_rata_die
+    |> Calendrical.rata_die_from_date
     |> RataDie.day_of_week
   end
 

@@ -21,10 +21,10 @@ defmodule Calendrical do
   @doc """
   Converts a `%Date{}` to a rata die
   """
-  def date_to_rata_die(%Date{} = date) do
+  def rata_die_from_date(%Date{} = date) do
     date
-    |> date_to_naive_datetime
-    |> naive_datetime_to_rata_die
+    |> naive_datetime_from_date
+    |> rata_die_from_naive_datetime
   end
 
   @doc """
@@ -41,17 +41,9 @@ defmodule Calendrical do
 
   The time will be set to midnight.
   """
-  def date_to_naive_datetime(%Date{year: year, month: month, day: day, calendar: calendar}) do
+  def naive_datetime_from_date(%Date{year: year, month: month, day: day, calendar: calendar}) do
     {:ok, naive_datetime} = NaiveDateTime.new(year, month, day, 0, 0, 0, {0, 0}, calendar)
     naive_datetime
-  end
-
-  @doc """
-  Converts a `%NaiveDateTime{}` to a rata die
-  """
-  def naive_datetime_to_rata_die(%NaiveDateTime{year: y, month: m, day: d, hour: h, minute: min,
-        second: s, microsecond: ms, calendar: calendar}) do
-    calendar.naive_datetime_to_rata_die(y, m, d, h, min, s, ms)
   end
 
   @doc """
@@ -59,6 +51,14 @@ defmodule Calendrical do
   """
   def naive_datetime_from_rata_die({_, {_, _}} = rata_die, calendar) do
     calendar.naive_datetime_from_rata_die(rata_die)
+  end
+
+  @doc """
+  Converts a `%NaiveDateTime{}` to a rata die
+  """
+  def rata_die_from_naive_datetime(%NaiveDateTime{year: y, month: m, day: d, hour: h, minute: min,
+        second: s, microsecond: ms, calendar: calendar}) do
+    calendar.naive_datetime_to_rata_die(y, m, d, h, min, s, ms)
   end
 end
 

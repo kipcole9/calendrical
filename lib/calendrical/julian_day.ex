@@ -26,7 +26,6 @@ defmodule Calendrical.JulianDay do
 
   import Calendrical.RataDie
 
-
   @doc """
   Returns the epoch for the Julian Day
   as a rata die.
@@ -53,7 +52,7 @@ defmodule Calendrical.JulianDay do
   """
   def date_to_julian_day(%Date{} = date) do
     date
-    |> Calendrical.date_to_rata_die
+    |> Calendrical.rata_die_from_date
     |> julian_day_from_rata_die
   end
 
@@ -86,7 +85,7 @@ defmodule Calendrical.JulianDay do
   """
   def date_to_modified_julian_day(%Date{} = date) do
     date
-    |> Calendrical.date_to_rata_die
+    |> Calendrical.rata_die_from_date
     |> modified_julian_day_from_rata_die
   end
 
@@ -115,7 +114,7 @@ defmodule Calendrical.JulianDay do
   def julian_day_from_rata_die({_, {_,_}} = rata_die) do
     rata_die
     |> sub(jd_epoch())
-    |> rata_die_to_float
+    |> float_from_rata_die
   end
 
   @doc """
@@ -133,7 +132,7 @@ defmodule Calendrical.JulianDay do
   def modified_julian_day_from_rata_die({_, {_,_}} = rata_die)  do
     rata_die
     |> sub(mjd_epoch())
-    |> rata_die_to_float
+    |> float_from_rata_die
   end
 
   @doc """

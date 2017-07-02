@@ -5,14 +5,18 @@ defmodule Calendrical.RataDie do
 
   alias Calendrical.Math
 
+  defdelegate add(rata_die_1, rata_die_2), to: Math.Fraction
+  defdelegate sub(rata_die_1, rata_die_2), to: Math.Fraction
+
   @doc """
   Converts a float to a rata die
   """
   @precision 10_000
+  @spec rata_die_from_float(float) :: Calendar.rata_die
   def rata_die_from_float(float) do
     day = trunc(float)
     day_fraction = float - day
-    {day, {trunc(day_fraction * @precision), @precision}}
+    {day, Math.Fraction.simplify({trunc(day_fraction * @precision), @precision})}
   end
 
   @doc """
@@ -21,52 +25,9 @@ defmodule Calendrical.RataDie do
   Loss of precision is possible since float division
   is involved.
   """
-  def rata_die_to_float({day, {numerator, denominator}}) do
+  @spec float_from_rata_die(Calendar.rata_die) :: float
+  def float_from_rata_die({day, {numerator, denominator}}) do
     day + (numerator / denominator)
-  end
-
-  @doc """
-  Add two rata die together
-  """
-  def add({day1, {n1, d1}}, {day2, {n2, d2}}) when d1 == d2 do
-    {day1 + day2, {n1 + n2, d1}}
-  end
-
-  def add({day1, {0, _d1}}, {day2, {n2, d2}}) do
-    {day1 + day2, {n2, d2}}
-  end
-
-  def add({day1, {n1, d1}}, {day2, {0, _d2}}) do
-    {day1 + day2, {n1, d1}}
-  end
-
-  def add({day1, {n1, d1}}, {day2, {n2, d2}}) do
-    denom = d1 * d2
-    n1_a = denom / d1 * n1
-    n2_a = denom / d2 * n2
-    {day1 + day2, {round(n1_a + n2_a), denom}}
-  end
-
-  @doc """
-  Subtract one rata die from another
-  """
-  def sub({day1, {n1, d1}}, {day2, {n2, d2}}) when d1 == d2 do
-    {day1 - day2, {n1 - n2, d1}}
-  end
-
-  def sub({day1, {0, _d1}}, {day2, {n2, d2}}) do
-    {day1 - day2, {n2, d2}}
-  end
-
-  def sub({day1, {n1, d1}}, {day2, {0, _d2}}) do
-    {day1 - day2, {n1, d1}}
-  end
-
-  def sub({day1, {n1, d1}}, {day2, {n2, d2}}) do
-    denom = d1 * d2
-    n1_a = denom / d1 * n1
-    n2_a = denom / d2 * n2
-    {day1 - day2, {round(n1_a - n2_a), denom}}
   end
 
   # This day_of_week calculation returns 1..7 since
@@ -75,13 +36,13 @@ defmodule Calendrical.RataDie do
   @days_in_a_week 7
   def day_of_week(%Date{} = date) do
     date
-    |> Calendrical.date_to_naive_datetime
+    |> Calendrical.naive_datetime_from_date
     |> day_of_week
   end
 
   def day_of_week(%NaiveDateTime{} = datetime) do
     datetime
-    |> Calendrical.naive_datetime_to_rata_die
+    |> Calendrical.rata_die_from_naive_datetime
     |> day_of_week
   end
 

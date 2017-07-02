@@ -38,7 +38,7 @@ defmodule Calendrical.Calendar.Gregorian do
     {:ok, date} = Date.new(year, month, day, __MODULE__)
 
     date
-    |> Calendrical.date_to_rata_die
+    |> Calendrical.rata_die_from_date
     |> RataDie.day_of_week
   end
 
