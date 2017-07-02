@@ -25,6 +25,35 @@
     * `Calendrical.Calendar.Ethiopic`
     * `Calendrical.Calendar.Julian`
 
+## Example Usage
+
+`Date.new/4` is used to create a calendar with the default calendar being `Calendar.ISO`.  To create a date using one of the `Calendrical` calendars simply:
+
+    iex> Date.new(2017,1,1,Calendrical.Calendar.Gregorian)
+    {:ok,
+     %Date{calendar: Calendrical.Calendar.Gregorian, day: 1, month: 1, year: 2017}}
+
+    iex> Date.new(2017,1,1,Calendrical.Calendar.Egyptian)
+    {:ok,
+     %Date{calendar: Calendrical.Calendar.Egyptian, day: 1, month: 1, year: 2017}}
+
+To convert a date from one calendar to another use the `Date.convert/2` or `Date.convert!/2` functions.  For example:
+
+    iex> Date.convert! ~D[2016-07-01], Calendrical.Calendar.Julian
+    %Date{calendar: Calendrical.Calendar.Julian, day: 18, month: 6, year: 2016}
+
+Note that dates can only be converted if the calendars both have the same definition of the start of day.  Some calendars define the start of day various as sunrise, sunset, noon and midnight.   To convert calendars with different notions of when the day starts the time of day will need to be specified hence `DateTime.convert/2` is required.
+
+    iex> dt1 = %DateTime{calendar: Calendar.ISO, day: 29, hour: 23, microsecond: {0, 0},
+     minute: 0, month: 2, second: 7, std_offset: 0, time_zone: "America/Manaus",
+     utc_offset: -14400, year: 2000, zone_abbr: "AMT"}
+
+    iex> DateTime.convert(dt1, Calendrical.Calendar.Julian)
+    {:ok,
+     %DateTime{calendar: Calendrical.Calendar.Julian, day: 16, hour: 23, microsecond: {0, 6},
+      minute: 0, month: 2, second: 7, std_offset: 0, time_zone: "America/Manaus",
+      utc_offset: -14400, year: 2000, zone_abbr: "AMT"}}
+
 ## Roadmap
 
   - [ ] Date and time formatting which will be done in a locale sensitive way through the [ex_cldr](https://hex.pm/packages/ex_cldr) package after it is updated to provide that support.  Expected in July 2017.
