@@ -64,4 +64,23 @@ defmodule CalendricalTest do
       end
     end
   end
+
+  Enum.each CalendricalTest.Data.file(3), fn row ->
+    for c <- ["persian"] do
+      import CalendricalTest.Helpers
+
+      # Test that a date in a calendar correctly converts to a rata die
+      test "that the #{module_name(c)} date #{year(row, c)}-#{month(row, c)}-#{day(row, c)} equals RD #{row[:rd]}" do
+        days = module(unquote(c)).date_to_rata_die_days(year(unquote(row), unquote(c)), month(unquote(row), unquote(c)), day(unquote(row), unquote(c)))
+        assert days == unquote(row[:rd])
+      end
+
+      # Test that a rata die converts correctly to a date in a calendar
+      test "that the RD #{row[:rd]} equals #{module_name(c)} date #{year(row, c)}-#{month(row, c)}-#{day(row, c)}" do
+        j_date = module(unquote(c)).date_from_rata_die_days(unquote(row[:rd]))
+        {:ok, date} = Date.new(year(unquote(row), unquote(c)), month(unquote(row), unquote(c)), day(unquote(row), unquote(c)), module(unquote(c)))
+        assert date == j_date
+      end
+    end
+  end
 end

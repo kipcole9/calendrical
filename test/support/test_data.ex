@@ -20,6 +20,16 @@ defmodule CalendricalTest.Data do
       {k, v} -> {String.to_atom(k), String.to_integer(v)}
     end
   end
+
+  def transform(3, row) do
+    Enum.map row, fn
+      {"persian_year" = k, v}  -> {String.to_atom(k), String.to_integer(v)}
+      {"persian_month" = k, v} -> {String.to_atom(k), String.to_integer(v)}
+      {"persian_day" = k, v}   -> {String.to_atom(k), String.to_integer(v)}
+      {"rd" = k, v}            -> {String.to_atom(k), String.to_integer(v)}
+      {k, v}                   -> {String.to_atom(k), v}
+    end
+  end
 end
 
 

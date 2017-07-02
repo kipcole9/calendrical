@@ -13,7 +13,9 @@ defmodule Calendrical do
 
   * K-Day calculations in `Calendrical.Kday` (in the first release)
 
-  * Additional Arithmetic calendar types (Julian calendar in the second release)
+  * Julian Day conversion in `Calendrical.JulianDay`
+
+  * Additional Arithmetic calendar types
 
   * Astronomical calendar types (in a future release)
   """
@@ -44,7 +46,7 @@ defmodule Calendrical do
   The time will be set to midnight.
   """
   def naive_datetime_from_date(%Date{year: year, month: month, day: day, calendar: calendar}) do
-    {:ok, naive_datetime} = NaiveDateTime.new(year, month, day, 0, 0, 0, {0, 0}, calendar)
+    {:ok, naive_datetime} = NaiveDateTime.new(year, month, day, 0, 0, 0, {0, 6}, calendar)
     naive_datetime
   end
 
