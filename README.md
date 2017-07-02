@@ -13,15 +13,17 @@
 
   * K-Day calculations in `Calendrical.Kday`
 
+  * Julian Day conversion in `Calendrical.JulianDay`. Note this is not the same thing as the Julian calendar.
+
   * A calendar `Calendrical.Calendar.Gregorian` that is largely the same as the standard Elixir `Calendar.ISO`.  The standard should be preferred
 
   *  Several calendars of primarily historic usage:
 
-    * Calendrical.Calendar.Armenian
-    * Calendrical.Calendar.Coptic
-    * Calendrical.Calendar.Egyptian
-    * Calendrical.Calendar.Ethiopic
-    * Calendrical.Calendar.Julian
+    * `Calendrical.Calendar.Armenian`
+    * `Calendrical.Calendar.Coptic`
+    * `Calendrical.Calendar.Egyptian`
+    * `Calendrical.Calendar.Ethiopic`
+    * `Calendrical.Calendar.Julian`
 
 ## Roadmap
 
