@@ -13,13 +13,22 @@
 
   * K-Day calculations in `Calendrical.Kday`
 
-  * Additional Arithmetic calendar types (Gregorian and Julian calendar are in this release)
+  * A calendar `Calendrical.Calendar.Gregorian` that is largely the same as the standard Elixir `Calendar.ISO`.  The standard should be preferred
 
-  * Astronomical calendar types (in a future release)
+  *  Several calendars of primarily historic usage:
+
+    * Armenian
+    * Coptic
+    * Egyptian
+    * Ethiopic
 
 ## Roadmap
 
-This first release provides k-day functions in `Calendarical.Kday`.  Next few releases will add additional arithmetic calendars.  Astronomical calendars will take longer - to ensure the Astronomy calculations are correct.
+  - [ ] Date and time formatting which will be done in a locale sensitive way through the [ex_cldr](https://hex.pm/packages/ex_cldr) package after it is updated to provide that support.  Expected in July 2017.
+
+  - [ ] Hebrew, Islamic and Persian calendars (the arithmetic versions) are expected to land in July 2017
+
+  - [ ]  Astronomical calendar types will be implemented but only after the required astronomy library is built (ie not expected before year end 2017)
 
 ## Elixir Version Support
 
@@ -31,7 +40,7 @@ This first release provides k-day functions in `Calendarical.Kday`.  Next few re
 
 ```elixir
     def deps do
-      [{:calendrical, "~> 0.1.0"}]
+      [{:calendrical, "~> 0.1.1"}]
     end
 ```
 

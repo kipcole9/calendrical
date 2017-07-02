@@ -1,3 +1,11 @@
+## Changelog for Calendrical v0.1.2  July 1,  2017
+
+This release adds some addition calendars that are primarily of historic use.
+
+### Enhancements
+
+* Add Armenian, Coptic, Egyptian and Ethiopic calendars.
+
 ## Changelog for Calendrical v0.1.1  June 29,  2017
 
 ### Enhancements

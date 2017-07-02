@@ -112,18 +112,8 @@ defmodule Calendrical.Calendar.Julian do
 
   @doc """
   Define the rollover moment for the given calendar.
-  This is the moment, in your calendar, when the current day ends
-  and the next day starts.
-  The result of this function is used to check if two calendars rollover at
-  the same time of day. If they do not, we can only convert datetimes and times
-  between them. If they do, this means that we can also convert dates as well
-  as naive datetimes between them.
-  This day fraction should be in its most simplified form possible, to make comparisons fast.
-  ## Examples
-    * If, in your Calendar, a new day starts at midnight, return {0, 1}.
-    * If, in your Calendar, a new day starts at sunrise, return {1, 4}.
-    * If, in your Calendar, a new day starts at noon, return {1, 2}.
-    * If, in your Calendar, a new day starts at sunset, return {3, 4}.
+
+  Julian days start at midnight.
   """
   def day_rollover_relative_to_midnight_utc() do
     {0, 1}
