@@ -5,7 +5,7 @@
 
   The conversion mechanism is based upon the definition of `rata die` as described
   in [Calendrical Calculations](https://www.amazon.com/Calendrical-Calculations-Nachum-Dershowitz/dp/0521702380)
-  by Dershowitz and Reingold.  This `rata die` gives a numberical value to a moment in time
+  by Dershowitz and Reingold.  This `rata die` gives a numerical value to a moment in time
   that is idependent of any specific calendar.  As a result libraries such as `Calendrical` can
   implement different calendars and calendar calculations in a conformant way.
 
@@ -17,10 +17,11 @@
 
   *  Several calendars of primarily historic usage:
 
-    * Armenian
-    * Coptic
-    * Egyptian
-    * Ethiopic
+    * Calendrical.Calendar.Armenian
+    * Calendrical.Calendar.Coptic
+    * Calendrical.Calendar.Egyptian
+    * Calendrical.Calendar.Ethiopic
+    * Calendrical.Calendar.Julian
 
 ## Roadmap
 
@@ -40,7 +41,7 @@
 
 ```elixir
     def deps do
-      [{:calendrical, "~> 0.1.1"}]
+      [{:calendrical, "~> 0.1.2"}]
     end
 ```
 
