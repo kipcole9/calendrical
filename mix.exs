@@ -7,7 +7,7 @@ defmodule Calendrical.Mixfile do
     [
       app: :calendrical,
       version: @version,
-      elixir: "1.5.0-rc.0",
+      elixir: "~> 1.5.0-rc or ~> 1.5",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps(),
