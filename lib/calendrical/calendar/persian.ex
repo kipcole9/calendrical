@@ -21,9 +21,6 @@ defmodule Calendrical.Calendar.Persian do
 
   @doc """
   Returns how many days there are in the given year-month.
-
-  This is the same as `Calendar.ISO` except that the leap_year
-  calculation is different.
   """
   def days_in_month(year, month)
 
