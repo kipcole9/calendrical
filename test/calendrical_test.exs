@@ -3,6 +3,7 @@ defmodule CalendricalTest do
   doctest Calendrical
   doctest Calendrical.Kday
   doctest Calendrical.Math
+  doctest Calendrical.Math.Fraction
   doctest Calendrical.JulianDay
 
   Enum.each CalendricalTest.Data.file(1), fn row ->
