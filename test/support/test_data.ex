@@ -14,6 +14,12 @@ defmodule CalendricalTest.Data do
       {k, v} -> {String.to_atom(k), String.to_integer(v)}
     end
   end
+
+  def transform(2, row) do
+    Enum.map row, fn
+      {k, v} -> {String.to_atom(k), String.to_integer(v)}
+    end
+  end
 end
 
 

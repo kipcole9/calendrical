@@ -1,12 +1,12 @@
-defmodule Calendrical.Calendar.Coptic do
+defmodule Calendrical.Calendar.Ethiopic do
   @behaviour Calendar
   alias Calendrical.RataDie
   alias Calendrical.Math
 
-  {:ok, epoch_date} = Date.new(284, 8, 29, Calendrical.Calendar.Julian)
-  @coptic_epoch Calendrical.rata_die_from_date(epoch_date)
-  def coptic_epoch do
-    @coptic_epoch
+  {:ok, epoch_date} = Date.new(8, 8, 29, Calendrical.Calendar.Julian)
+  @ethiopic_epoch Calendrical.rata_die_from_date(epoch_date)
+  def ethiopic_epoch do
+    @ethiopic_epoch
   end
 
   @doc """
@@ -156,12 +156,12 @@ defmodule Calendrical.Calendar.Coptic do
   end
 
   def date_to_rata_die_days(year, month, day) do
-    coptic_epoch_days() - 1 + (365 * (year - 1)) + Float.floor((year / 4) +
+    ethiopic_epoch_days() - 1 + (365 * (year - 1)) + Float.floor((year / 4) +
     30 * (month - 1)) + day |> trunc
   end
 
   def date_from_rata_die_days(days) do
-    year = Float.floor((4 * (days - coptic_epoch_days()) + 1463) / 1461) |> trunc
+    year = Float.floor((4 * (days - ethiopic_epoch_days()) + 1463) / 1461) |> trunc
     month =
       1 +
       Float.floor((days - date_to_rata_die_days(year, 1, 1)) / 30) |> trunc
@@ -170,9 +170,9 @@ defmodule Calendrical.Calendar.Coptic do
     date
   end
 
-  {days, _time_fraction} = @coptic_epoch
+  {days, _time_fraction} = @ethiopic_epoch
   @days days
-  defp coptic_epoch_days do
+  defp ethiopic_epoch_days do
     @days
   end
 

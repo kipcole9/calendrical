@@ -7,7 +7,7 @@ defmodule CalendricalTest do
   doctest Calendrical.JulianDay
 
   Enum.each CalendricalTest.Data.file(1), fn row ->
-    for c <- ["julian", "gregorian"] do
+    for c <- ["julian", "gregorian", "coptic"] do
       import CalendricalTest.Helpers
 
       # Test that a date in a calendar correctly converts to a rata die
@@ -42,6 +42,25 @@ defmodule CalendricalTest do
         {:ok, date} = Date.new(year(unquote(row), unquote(c)), month(unquote(row), unquote(c)), day(unquote(row), unquote(c)), module(unquote(c)))
         day_cardinal = Calendrical.RataDie.day_of_week(date)
         assert Calendrical.Kday.day_name(day_cardinal) == unquote(row[:weekday])
+      end
+    end
+  end
+
+  Enum.each CalendricalTest.Data.file(2), fn row ->
+    for c <- ["ethiopic"] do
+      import CalendricalTest.Helpers
+
+      # Test that a date in a calendar correctly converts to a rata die
+      test "that the #{module_name(c)} date #{year(row, c)}-#{month(row, c)}-#{day(row, c)} equals RD #{row[:rd]}" do
+        days = module(unquote(c)).date_to_rata_die_days(year(unquote(row), unquote(c)), month(unquote(row), unquote(c)), day(unquote(row), unquote(c)))
+        assert days == unquote(row[:rd])
+      end
+
+      # Test that a rata die converts correctly to a date in a calendar
+      test "that the RD #{row[:rd]} equals #{module_name(c)} date #{year(row, c)}-#{month(row, c)}-#{day(row, c)}" do
+        j_date = module(unquote(c)).date_from_rata_die_days(unquote(row[:rd]))
+        {:ok, date} = Date.new(year(unquote(row), unquote(c)), month(unquote(row), unquote(c)), day(unquote(row), unquote(c)), module(unquote(c)))
+        assert date == j_date
       end
     end
   end
