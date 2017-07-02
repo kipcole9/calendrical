@@ -1,6 +1,5 @@
 defmodule Calendrical.Calendar.Gregorian do
   @behaviour Calendar
-  alias Calendrical.RataDie
   alias Calendrical.Math
 
   def gregorian_epoch do
@@ -36,7 +35,7 @@ defmodule Calendrical.Calendar.Gregorian do
 
     date
     |> Calendrical.rata_die_from_date
-    |> RataDie.day_of_week
+    |> Calendrical.day_of_week
   end
 
   @doc """

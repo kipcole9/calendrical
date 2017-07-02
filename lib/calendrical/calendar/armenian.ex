@@ -1,6 +1,5 @@
 defmodule Calendrical.Calendar.Armenian do
   @behaviour Calendar
-  alias Calendrical.RataDie
   alias Calendrical.Math
 
   @epoch {201_443, {1, 4}}
@@ -31,7 +30,7 @@ defmodule Calendrical.Calendar.Armenian do
 
     date
     |> Calendrical.rata_die_from_date
-    |> RataDie.day_of_week
+    |> Calendrical.day_of_week
   end
 
   @doc """

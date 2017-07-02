@@ -18,6 +18,8 @@ defmodule Calendrical do
   * Astronomical calendar types (in a future release)
   """
 
+  alias Calendrical.Math
+
   @doc """
   Converts a `%Date{}` to a rata die
   """
@@ -56,9 +58,31 @@ defmodule Calendrical do
   @doc """
   Converts a `%NaiveDateTime{}` to a rata die
   """
-  def rata_die_from_naive_datetime(%NaiveDateTime{year: y, month: m, day: d, hour: h, minute: min,
-        second: s, microsecond: ms, calendar: calendar}) do
-    calendar.naive_datetime_to_rata_die(y, m, d, h, min, s, ms)
+  def rata_die_from_naive_datetime(%NaiveDateTime{year: year, month: month, day: day,
+                hour: hour, minute: minute, second: second, microsecond: microsecond,
+                calendar: calendar}) do
+    calendar.naive_datetime_to_rata_die(year, month, day, hour, minute, second, microsecond)
+  end
+
+  @doc """
+  Returns the integer day of the week in the range
+  of 1 for Monday through 7 for Sunday.
+  """
+  @days_in_a_week 7
+  def day_of_week(%Date{} = date) do
+    date
+    |> naive_datetime_from_date
+    |> day_of_week
+  end
+
+  def day_of_week(%NaiveDateTime{} = datetime) do
+    datetime
+    |> rata_die_from_naive_datetime
+    |> day_of_week
+  end
+
+  def day_of_week({day, {_, _}}) do
+    Math.amod(day, @days_in_a_week)
   end
 end
 

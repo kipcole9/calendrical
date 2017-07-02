@@ -1,6 +1,5 @@
 defmodule Calendrical.Calendar.Egyptian do
   @behaviour Calendar
-  alias Calendrical.RataDie
   alias Calendrical.Math
 
   @epoch Calendrical.JulianDay.rata_die_from_julian_day(1448638)
@@ -31,7 +30,7 @@ defmodule Calendrical.Calendar.Egyptian do
 
     date
     |> Calendrical.rata_die_from_date
-    |> RataDie.day_of_week
+    |> Calendrical.day_of_week
   end
 
   @doc """

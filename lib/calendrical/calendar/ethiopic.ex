@@ -1,6 +1,5 @@
 defmodule Calendrical.Calendar.Ethiopic do
   @behaviour Calendar
-  alias Calendrical.RataDie
   alias Calendrical.Math
 
   {:ok, epoch_date} = Date.new(8, 8, 29, Calendrical.Calendar.Julian)
@@ -35,7 +34,7 @@ defmodule Calendrical.Calendar.Ethiopic do
 
     date
     |> Calendrical.rata_die_from_date
-    |> RataDie.day_of_week
+    |> Calendrical.day_of_week
   end
 
   @doc """

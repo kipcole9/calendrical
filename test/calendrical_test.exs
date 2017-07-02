@@ -40,7 +40,7 @@ defmodule CalendricalTest do
       # Tests that a date is correctly identified as the right day of week
       test "that the #{module_name(c)} date #{year(row, c)}-#{month(row, c)}-#{day(row, c)} is a #{row[:weekday]}" do
         {:ok, date} = Date.new(year(unquote(row), unquote(c)), month(unquote(row), unquote(c)), day(unquote(row), unquote(c)), module(unquote(c)))
-        day_cardinal = Calendrical.RataDie.day_of_week(date)
+        day_cardinal = Calendrical.day_of_week(date)
         assert Calendrical.Kday.day_name(day_cardinal) == unquote(row[:weekday])
       end
     end
