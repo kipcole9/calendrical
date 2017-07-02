@@ -9,13 +9,16 @@
   that is idependent of any specific calendar.  As a result libraries such as `Calendrical` can
   implement different calendars and calendar calculations in a conformant way.
 
-  Calendrical implements:
+  `Calendrical` implements:
 
   * K-Day calculations in `Calendrical.Kday`
 
   * Julian Day conversion in `Calendrical.JulianDay`. Note this is not the same thing as the Julian calendar.
 
-  * A calendar `Calendrical.Calendar.Gregorian` that is largely the same as the standard Elixir `Calendar.ISO`.  The standard should be preferred
+  * Contemporary calendars:
+
+    * `Calendrical.Calendar.Gregorian` that is largely the same as the standard Elixir `Calendar.ISO`.  The standard should be preferred
+    * `Calendrical.Calendar.Persian` that implements the Arithmetic Persian calendar
 
   *  Several calendars of primarily historic usage:
 
@@ -58,7 +61,7 @@ Note that dates can only be converted if the calendars both have the same defini
 
   - [ ] Date and time formatting which will be done in a locale sensitive way through the [ex_cldr](https://hex.pm/packages/ex_cldr) package after it is updated to provide that support.  Expected in July 2017.
 
-  - [ ] Hebrew, Islamic and Persian calendars (the arithmetic versions) are expected to land in July 2017
+  - [ ] Hebrew and Islamic calendars (the arithmetic versions) are expected to land in July 2017
 
   - [ ]  Astronomical calendar types will be implemented but only after the required astronomy library is built (ie not expected before year end 2017)
 
