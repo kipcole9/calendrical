@@ -4,16 +4,13 @@ defmodule Calendrical.Calendar.Ethiopic do
   alias Calendrical.Math
 
   {:ok, epoch_date} = Date.new(8, 8, 29, Calendrical.Calendar.Julian)
-  @ethiopic_epoch Calendrical.rata_die_from_date(epoch_date)
-  def ethiopic_epoch do
-    @ethiopic_epoch
+  @epoch Calendrical.rata_die_from_date(epoch_date)
+  def epoch do
+    @epoch
   end
 
   @doc """
   Returns how many days there are in the given year-month.
-
-  This is the same as `Calendar.ISO` except that the leap_year
-  calculation is different.
   """
   def days_in_month(year, month)
 
@@ -25,14 +22,7 @@ defmodule Calendrical.Calendar.Ethiopic do
 
   @doc """
   Returns true if the given year is a leap year.
-  A leap year is a year of a longer length than normal. The exact meaning
-  is up to the calendar. A calendar must return `false` if it does not support
-  the concept of leap years.
   """
-  def leap_year?(year) when year > 0 do
-    Math.mod(year, 4) == 3
-  end
-
   def leap_year?(year) do
     Math.mod(year, 4) == 3
   end
@@ -52,7 +42,7 @@ defmodule Calendrical.Calendar.Ethiopic do
   Converts the date into a string according to the calendar.
   """
   def date_to_string(year, month, day) do
-    Calendar.ISO.date_to_string(year, month, day) <> julian_signature()
+    Calendar.ISO.date_to_string(year, month, day) <> signature()
   end
 
   @doc """
@@ -60,7 +50,7 @@ defmodule Calendrical.Calendar.Ethiopic do
   """
   def naive_datetime_to_string(year, month, day, hour, minute, second, microsecond) do
     Calendar.ISO.naive_datetime_to_string(year, month, day, hour, minute, second, microsecond) <>
-    julian_signature()
+    signature()
   end
 
   @doc """
@@ -69,7 +59,7 @@ defmodule Calendrical.Calendar.Ethiopic do
   def datetime_to_string(year, month, day, hour, minute, second, microsecond,
                                time_zone, zone_abbr, utc_offset, std_offset) do
     Calendar.ISO.datetime_to_string(year, month, day, hour, minute, second, microsecond,
-                               time_zone, zone_abbr, utc_offset, std_offset)
+                               time_zone, zone_abbr, utc_offset, std_offset) <> signature()
   end
 
   @doc """
@@ -111,26 +101,16 @@ defmodule Calendrical.Calendar.Ethiopic do
   end
 
   @doc """
-  Define the rollover moment for the given calendar.
-  This is the moment, in your calendar, when the current day ends
-  and the next day starts.
-  The result of this function is used to check if two calendars rollover at
-  the same time of day. If they do not, we can only convert datetimes and times
-  between them. If they do, this means that we can also convert dates as well
-  as naive datetimes between them.
-  This day fraction should be in its most simplified form possible, to make comparisons fast.
-  ## Examples
-    * If, in your Calendar, a new day starts at midnight, return {0, 1}.
-    * If, in your Calendar, a new day starts at sunrise, return {1, 4}.
-    * If, in your Calendar, a new day starts at noon, return {1, 2}.
-    * If, in your Calendar, a new day starts at sunset, return {3, 4}.
+  Define the rollover moment for the Coptic calendar.
+
+  Ethiopic days start at sunset.
   """
   def day_rollover_relative_to_midnight_utc() do
     {3, 4}
   end
 
   @doc """
-  Should return `true` if the given date describes a proper date in the calendar.
+  Returns `true` if the given date describes a proper date in the calendar.
   """
   def valid_date?(_year, month, day) when month in 1..12 and day in 1..30 do
     true
@@ -145,7 +125,7 @@ defmodule Calendrical.Calendar.Ethiopic do
   end
 
   @doc """
-  Should return `true` if the given time describes a proper time in the calendar.
+  Returns `true` if the given time describes a proper time in the calendar.
   """
   def valid_time?(hour, minute, second, microsecond) do
     Calendar.ISO.valid_time?(hour, minute, second, microsecond)
@@ -155,13 +135,19 @@ defmodule Calendrical.Calendar.Ethiopic do
     date_to_rata_die_days(year, month, day)
   end
 
+  @doc """
+  Converts a `year`, `month` and `day` into a rata die number of days.
+  """
   def date_to_rata_die_days(year, month, day) do
-    ethiopic_epoch_days() - 1 + (365 * (year - 1)) + Float.floor((year / 4) +
+    epoch_days() - 1 + (365 * (year - 1)) + Float.floor((year / 4) +
     30 * (month - 1)) + day |> trunc
   end
 
+  @doc """
+  Converts a rata die into a `%Date{}`
+  """
   def date_from_rata_die_days(days) do
-    year = Float.floor((4 * (days - ethiopic_epoch_days()) + 1463) / 1461) |> trunc
+    year = Float.floor((4 * (days - epoch_days()) + 1463) / 1461) |> trunc
     month =
       1 +
       Float.floor((days - date_to_rata_die_days(year, 1, 1)) / 30) |> trunc
@@ -170,13 +156,13 @@ defmodule Calendrical.Calendar.Ethiopic do
     date
   end
 
-  {days, _time_fraction} = @ethiopic_epoch
+  {days, _time_fraction} = @epoch
   @days days
-  defp ethiopic_epoch_days do
+  defp epoch_days do
     @days
   end
 
-  defp julian_signature do
-    "Coptic"
+  defp signature do
+    " " <> "Ethiopic"
   end
 end

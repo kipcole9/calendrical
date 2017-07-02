@@ -7,7 +7,7 @@ defmodule CalendricalTest do
   doctest Calendrical.JulianDay
 
   Enum.each CalendricalTest.Data.file(1), fn row ->
-    for c <- ["julian", "gregorian", "coptic"] do
+    for c <- ["julian", "gregorian", "coptic", "egyptian", "armenian"] do
       import CalendricalTest.Helpers
 
       # Test that a date in a calendar correctly converts to a rata die

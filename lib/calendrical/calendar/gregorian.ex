@@ -23,9 +23,6 @@ defmodule Calendrical.Calendar.Gregorian do
 
   @doc """
   Returns true if the given year is a leap year.
-  A leap year is a year of a longer length than normal. The exact meaning
-  is up to the calendar. A calendar must return `false` if it does not support
-  the concept of leap years.
   """
   def leap_year?(year) when is_integer(year) do
     Math.mod(year, 4) === 0 and (Math.mod(year, 100) > 0 or Math.mod(year, 400) === 0)
@@ -43,7 +40,7 @@ defmodule Calendrical.Calendar.Gregorian do
   end
 
   @doc """
-  Converts the date into a string according to the calendar.
+  Converts the date into a string according.
   """
   def date_to_string(year, month, day) do
     Calendar.ISO.date_to_string(year, month, day)
@@ -105,18 +102,8 @@ defmodule Calendrical.Calendar.Gregorian do
 
   @doc """
   Define the rollover moment for the given calendar.
-  This is the moment, in your calendar, when the current day ends
-  and the next day starts.
-  The result of this function is used to check if two calendars rollover at
-  the same time of day. If they do not, we can only convert datetimes and times
-  between them. If they do, this means that we can also convert dates as well
-  as naive datetimes between them.
-  This day fraction should be in its most simplified form possible, to make comparisons fast.
-  ## Examples
-    * If, in your Calendar, a new day starts at midnight, return {0, 1}.
-    * If, in your Calendar, a new day starts at sunrise, return {1, 4}.
-    * If, in your Calendar, a new day starts at noon, return {1, 2}.
-    * If, in your Calendar, a new day starts at sunset, return {3, 4}.
+
+  Gregorian days start at midnight.
   """
   def day_rollover_relative_to_midnight_utc() do
     {0, 1}
@@ -136,6 +123,9 @@ defmodule Calendrical.Calendar.Gregorian do
     Calendar.ISO.valid_time?(hour, minute, second, microsecond)
   end
 
+  @doc """
+  Converts a `year`, `month` and `day` into a rata die number of days.
+  """
   def date_to_rata_die_days(year, month, day) do
     correction =
       cond do
@@ -153,6 +143,9 @@ defmodule Calendrical.Calendar.Gregorian do
     correction + day |> trunc
   end
 
+  @doc """
+  Converts a rata die into a `%Date{}`
+  """
   def date_from_rata_die_days(gregorian_days) do
     year = year_from_gregorian_days(gregorian_days)
 
