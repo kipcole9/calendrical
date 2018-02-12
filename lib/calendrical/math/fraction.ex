@@ -90,7 +90,8 @@ defmodule Calendrical.Math.Fraction do
   ## Example
 
       iex> Calendrical.Math.Fraction.to_string {2, {16, 25}}
-      "2ⁱ⁶⁄₂₅"
+      "2¹⁶⁄₂₅"
+
   """
   def to_string({integer, {numerator, denominator}}) do
     super_digits =
@@ -125,12 +126,13 @@ defmodule Calendrical.Math.Fraction do
       "⁵"
   """
   @spec superscript(integer) :: String.t()
-  def superscript(digit) when digit in [0, 1, 4, 5, 6, 7, 8, 9] do
+  def superscript(digit) when digit in [0, 4, 5, 6, 7, 8, 9] do
     <<226, 129, 176 + digit>>
   end
 
-  def superscript(1), do: "\u2071"
+  def superscript(1), do: "\u00b9"
   def superscript(2), do: "\u00b2"
+  def superscript(3), do: "\u00b3"
 
   @doc """
   Returns a binary string representing the superscript
