@@ -7,7 +7,7 @@ defmodule Calendrical.Kday do
 
   @type day_of_the_week :: 1..7
   @type day_names :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
-  @type date_or_time :: Date.t | NaiveDateTime.t | RataDie.t
+  @type date_or_time :: Date.t() | NaiveDateTime.t() | IsoDay.t()
 
   @days_in_a_week 7
 
@@ -30,13 +30,13 @@ defmodule Calendrical.Kday do
 
   """
   @spec day_cardinal(day_of_the_week | day_names) :: day_of_the_week
-  def day_cardinal(:monday),    do: 1
-  def day_cardinal(:tuesday),   do: 2
+  def day_cardinal(:monday), do: 1
+  def day_cardinal(:tuesday), do: 2
   def day_cardinal(:wednesday), do: 3
-  def day_cardinal(:thursday),  do: 4
-  def day_cardinal(:friday),    do: 5
-  def day_cardinal(:saturday),  do: 6
-  def day_cardinal(:sunday),    do: 7
+  def day_cardinal(:thursday), do: 4
+  def day_cardinal(:friday), do: 5
+  def day_cardinal(:saturday), do: 6
+  def day_cardinal(:sunday), do: 7
   def day_cardinal(day_number) when day_number in 1..@days_in_a_week, do: day_number
 
   def day_name(1), do: :monday
@@ -64,10 +64,16 @@ defmodule Calendrical.Kday do
   Return the date of the `day_of_the_week` on or before the
   specified `date`.
 
+  ## Arguments
+
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
     See `Calendrical.Kday.day_cardinal/1`
+
+  ## Returns
+
+  * A `%Date{}` in the calendar of the date provided as an argument
 
   ## Examples
 
@@ -84,22 +90,22 @@ defmodule Calendrical.Kday do
   """
   @spec kday_on_or_before(date_or_time, day_of_the_week) :: date_or_time
   def kday_on_or_before(%Date{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_date
+    |> iso_days_from_date
     |> kday_on_or_before(day_cardinal(k))
-    |> date_from_rata_die(calendar)
+    |> date_from_iso_days(calendar)
   end
 
   def kday_on_or_before(%NaiveDateTime{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> kday_on_or_before(day_cardinal(k))
-    |> naive_datetime_from_rata_die(calendar)
+    |> naive_datetime_from_iso_days(calendar)
   end
 
-  def kday_on_or_before({day, {_, _} = moment}, k)  do
+  def kday_on_or_before({day, {_, _} = moment}, k) do
     day = day - day_of_week({day - k, moment})
     {day, moment}
   end
@@ -108,10 +114,16 @@ defmodule Calendrical.Kday do
   Return the date of the `day_of_the_week` on or after the
   specified `date`.
 
+  ## Arguments
+
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
     See `Calendrical.Kday.day_cardinal/1`
+
+  ## Returns
+
+  * A `%Date{}` in the calendar of the date provided as an argument
 
   ## Examples
 
@@ -128,22 +140,22 @@ defmodule Calendrical.Kday do
   """
   @spec kday_on_or_after(date_or_time(), day_of_the_week) :: date_or_time()
   def kday_on_or_after(%Date{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_date
+    |> iso_days_from_date
     |> kday_on_or_after(day_cardinal(k))
-    |> date_from_rata_die(calendar)
+    |> date_from_iso_days(calendar)
   end
 
   def kday_on_or_after(%NaiveDateTime{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> kday_on_or_after(day_cardinal(k))
-    |> naive_datetime_from_rata_die(calendar)
+    |> naive_datetime_from_iso_days(calendar)
   end
 
-  def kday_on_or_after({day, {_, _} = moment}, k)  do
+  def kday_on_or_after({day, {_, _} = moment}, k) do
     kday_on_or_before({day + 6, moment}, k)
   end
 
@@ -151,10 +163,16 @@ defmodule Calendrical.Kday do
   Return the date of the `day_of_the_week` nearest the
   specified `date`.
 
+  ## Arguments
+
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
     See `Calendrical.Kday.day_cardinal/1`
+
+  ## Returns
+
+  * A `%Date{}` in the calendar of the date provided as an argument
 
   ## Examples
 
@@ -171,19 +189,19 @@ defmodule Calendrical.Kday do
   """
   @spec kday_nearest(date_or_time, day_of_the_week) :: date_or_time
   def kday_nearest(%Date{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_date
+    |> iso_days_from_date
     |> kday_nearest(day_cardinal(k))
-    |> date_from_rata_die(calendar)
+    |> date_from_iso_days(calendar)
   end
 
   def kday_nearest(%NaiveDateTime{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> kday_nearest(day_cardinal(k))
-    |> naive_datetime_from_rata_die(calendar)
+    |> naive_datetime_from_iso_days(calendar)
   end
 
   def kday_nearest({day, {_, _} = moment}, k) do
@@ -194,10 +212,16 @@ defmodule Calendrical.Kday do
   Return the date of the `day_of_the_week` before the
   specified `date`.
 
+  ## Arguments
+
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
     See `Calendrical.Kday.day_cardinal/1`
+
+  ## Returns
+
+  * A `%Date{}` in the calendar of the date provided as an argument
 
   ## Examples
 
@@ -214,19 +238,19 @@ defmodule Calendrical.Kday do
   """
   @spec kday_before(date_or_time, day_of_the_week) :: date_or_time
   def kday_before(%Date{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_date
+    |> iso_days_from_date
     |> kday_before(day_cardinal(k))
-    |> date_from_rata_die(calendar)
+    |> date_from_iso_days(calendar)
   end
 
   def kday_before(%NaiveDateTime{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> kday_before(day_cardinal(k))
-    |> naive_datetime_from_rata_die(calendar)
+    |> naive_datetime_from_iso_days(calendar)
   end
 
   def kday_before({day, {_, _} = moment}, k) do
@@ -237,10 +261,16 @@ defmodule Calendrical.Kday do
   Return the date of the `day_of_the_week` after the
   specified `date`.
 
+  ## Arguments
+
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
     See `Calendrical.Kday.day_cardinal/1`
+
+  ## Returns
+
+  * A `%Date{}` in the calendar of the date provided as an argument
 
   ## Examples
 
@@ -257,19 +287,19 @@ defmodule Calendrical.Kday do
   """
   @spec kday_after(date_or_time, day_of_the_week) :: date_or_time
   def kday_after(%Date{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_date
+    |> iso_days_from_date
     |> kday_after(day_cardinal(k))
-    |> date_from_rata_die(calendar)
+    |> date_from_iso_days(calendar)
   end
 
   def kday_after(%NaiveDateTime{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> kday_after(day_cardinal(k))
-    |> naive_datetime_from_rata_die(calendar)
+    |> naive_datetime_from_iso_days(calendar)
   end
 
   def kday_after({day, {_, _} = moment}, k) do
@@ -280,6 +310,8 @@ defmodule Calendrical.Kday do
   Return the date of the `nth` `day_of_the_week` on or before/after the
   specified `date`.
 
+  ## Arguments
+
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `n` is the cardinal number of `k` before (negative `n`) or after
@@ -288,11 +320,15 @@ defmodule Calendrical.Kday do
   * `k` is an integer or atom representation of the day of the week.
     See `Calendrical.Kday.day_cardinal/1`
 
+  ## Returns
+
+  * A `%Date{}` in the calendar of the date provided as an argument
+
   ## Examples
 
       # Thanksgiving in the US
-      iex> Calendrical.Kday.nth_kday(~D[2017-11-01], 4, :tuesday)
-      ~D[2017-11-28]
+      iex> Calendrical.Kday.nth_kday(~D[2017-11-01], 4, :thursday)
+      ~D[2017-11-23]
 
       # Labor day in the US
       iex> Calendrical.Kday.nth_kday(~D[2017-09-01], 1, :monday)
@@ -305,19 +341,19 @@ defmodule Calendrical.Kday do
   """
   @spec nth_kday(date_or_time, integer, day_of_the_week) :: date_or_time
   def nth_kday(%Date{calendar: calendar} = date, n, k)
-  when (is_atom(k) or k in 1..7) and is_integer(n) do
+      when (is_atom(k) or k in 1..7) and is_integer(n) do
     date
-    |> rata_die_from_date
+    |> iso_days_from_date
     |> nth_kday(n, day_cardinal(k))
-    |> date_from_rata_die(calendar)
+    |> date_from_iso_days(calendar)
   end
 
   def nth_kday(%NaiveDateTime{calendar: calendar} = date, n, k)
-  when (is_atom(k) or k in 1..7) and is_integer(n) do
+      when (is_atom(k) or k in 1..7) and is_integer(n) do
     date
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> nth_kday(n, day_cardinal(k))
-    |> naive_datetime_from_rata_die(calendar)
+    |> naive_datetime_from_iso_days(calendar)
   end
 
   def nth_kday({_, {_, _}} = date, n, k) when n > 0 do
@@ -334,10 +370,16 @@ defmodule Calendrical.Kday do
   Return the date of the first `day_of_the_week` on or after the
   specified `date`.
 
-  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
+  ## Arguments
+
+  * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or ISO days
 
   * `k` is an integer or atom representation of the day of the week.
     See `Calendrical.Kday.day_cardinal/1`
+
+  ## Returns
+
+  * A `%Date{”}` in the calendar of the date provided as an argument
 
   ## Examples
 
@@ -352,19 +394,19 @@ defmodule Calendrical.Kday do
   """
   @spec first_kday(date_or_time, day_of_the_week) :: date_or_time
   def first_kday(%Date{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_date
+    |> iso_days_from_date
     |> first_kday(day_cardinal(k))
-    |> date_from_rata_die(calendar)
+    |> date_from_iso_days(calendar)
   end
 
   def first_kday(%NaiveDateTime{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> first_kday(day_cardinal(k))
-    |> naive_datetime_from_rata_die(calendar)
+    |> naive_datetime_from_iso_days(calendar)
   end
 
   def first_kday({_, {_, _}} = date, k) do
@@ -375,57 +417,58 @@ defmodule Calendrical.Kday do
   Return the date of the last `day_of_the_week` on or before the
   specified `date`.
 
+  ## Arguments
+
   * `date` is `%Date{}`, a `%DateTime{}`, `%NaiveDateTime{}` or a Rata Die
 
   * `k` is an integer or atom representation of the day of the week.
     See `Calendrical.Kday.day_cardinal/1`
 
+  ## Returns
+
+  * A `%Date{}` in the calendar of the date provided as an argument
+
   ## Example
 
       # Memorial Day in the US
-      Calendrical.Kday.last_kday(~[2017-05-31], :monday)
+      iex> Calendrical.Kday.last_kday(~D[2017-05-31], :monday)
       ~D[2017-05-29]
 
   """
   @spec last_kday(date_or_time, day_of_the_week) :: date_or_time
   def last_kday(%Date{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_date
+    |> iso_days_from_date
     |> last_kday(day_cardinal(k))
-    |> date_from_rata_die(calendar)
+    |> date_from_iso_days(calendar)
   end
 
   def last_kday(%NaiveDateTime{calendar: calendar} = date, k)
-  when is_atom(k) or k in 1..7 do
+      when is_atom(k) or k in 1..7 do
     date
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> last_kday(day_cardinal(k))
-    |> naive_datetime_from_rata_die(calendar)
+    |> naive_datetime_from_iso_days(calendar)
   end
 
   def last_kday({_, {_, _}} = date, k) do
     nth_kday(date, -1, k)
   end
 
-  # This day_of_week calculation returns 0..6 which
-  # is what the k-day calculations operate on whereas
-  # Elixir uses 1 for Monday through 7 for Sunday.
-
-  @days_in_a_week 7
-  defp day_of_week(%Date{} = date) do
+  def day_of_week(%Date{} = date) do
     date
-    |> naive_datetime_from_date
+    |> iso_days_from_date
     |> day_of_week
   end
 
-  defp day_of_week(%NaiveDateTime{} = datetime) do
+  def day_of_week(%NaiveDateTime{} = datetime) do
     datetime
-    |> rata_die_from_naive_datetime
+    |> iso_days_from_naive_datetime
     |> day_of_week
   end
 
-  defp day_of_week({day, {_, _}}) do
-    rem(day, @days_in_a_week)
+  def day_of_week({_, {_, _}} = iso_days) do
+    Calendrical.day_of_week(iso_days)
   end
 end

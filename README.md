@@ -3,30 +3,9 @@
   `Calendrical ` provides calendar-related functions that build upon the
   conversion capabilities of `Calendar` available in Elixir from verison 1.5.0.
 
-  The conversion mechanism is based upon the definition of `rata die` as described
-  in [Calendrical Calculations](https://www.amazon.com/Calendrical-Calculations-Nachum-Dershowitz/dp/0521702380)
-  by Dershowitz and Reingold.  This `rata die` gives a numerical value to a moment in time
-  that is idependent of any specific calendar.  As a result libraries such as `Calendrical` can
-  implement different calendars and calendar calculations in a conformant way.
-
   `Calendrical` implements:
 
   * K-Day calculations in `Calendrical.Kday`
-
-  * Julian Day conversion in `Calendrical.JulianDay`. Note this is not the same thing as the Julian calendar.
-
-  * Contemporary calendars:
-
-    * `Calendrical.Calendar.Gregorian` that is largely the same as the standard Elixir `Calendar.ISO`.  The standard should be preferred
-    * `Calendrical.Calendar.Persian` that implements the Arithmetic Persian calendar
-
-  *  Several calendars of primarily historic usage:
-
-    * `Calendrical.Calendar.Armenian`
-    * `Calendrical.Calendar.Coptic`
-    * `Calendrical.Calendar.Egyptian`
-    * `Calendrical.Calendar.Ethiopic`
-    * `Calendrical.Calendar.Julian`
 
 ## Example Usage
 

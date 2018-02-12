@@ -3,7 +3,7 @@ defmodule Calendrical.Calendar.Julian do
   alias Calendrical.Math
 
   {:ok, epoch_date} = Date.new(0, 12, 30, Calendar.ISO)
-  @epoch Calendrical.rata_die_from_date(epoch_date)
+  @epoch Calendrical.iso_days_from_date(epoch_date)
   def epoch do
     @epoch
   end
@@ -19,6 +19,7 @@ defmodule Calendrical.Calendar.Julian do
   def days_in_month(year, 2) do
     if leap_year?(year), do: 29, else: 28
   end
+
   def days_in_month(_, month) when month in [4, 6, 9, 11], do: 30
   def days_in_month(_, month) when month in 1..12, do: 31
 
@@ -40,8 +41,8 @@ defmodule Calendrical.Calendar.Julian do
     {:ok, date} = Date.new(year, month, day, __MODULE__)
 
     date
-    |> Calendrical.rata_die_from_date
-    |> Calendrical.day_of_week
+    |> Calendrical.iso_days_from_date()
+    |> Calendrical.day_of_week()
   end
 
   @doc """
@@ -56,16 +57,38 @@ defmodule Calendrical.Calendar.Julian do
   """
   def naive_datetime_to_string(year, month, day, hour, minute, second, microsecond) do
     Calendar.ISO.naive_datetime_to_string(year, month, day, hour, minute, second, microsecond) <>
-    signature() <> signature()
+      signature() <> signature()
   end
 
   @doc """
   Converts the datetime (with time zone) into a string according to the calendar.
   """
-  def datetime_to_string(year, month, day, hour, minute, second, microsecond,
-                               time_zone, zone_abbr, utc_offset, std_offset) do
-    Calendar.ISO.datetime_to_string(year, month, day, hour, minute, second, microsecond,
-                               time_zone, zone_abbr, utc_offset, std_offset) <> signature()
+  def datetime_to_string(
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        microsecond,
+        time_zone,
+        zone_abbr,
+        utc_offset,
+        std_offset
+      ) do
+    Calendar.ISO.datetime_to_string(
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second,
+      microsecond,
+      time_zone,
+      zone_abbr,
+      utc_offset,
+      std_offset
+    ) <> signature()
   end
 
   @doc """
@@ -76,18 +99,17 @@ defmodule Calendrical.Calendar.Julian do
   end
 
   @doc """
-  Converts the given datetime (with time zone) into the `t:rata_die` format.
+  Converts the given datetime (with time zone) into the `t:iso_day` format.
   """
-  def naive_datetime_to_rata_die(year, month, day, hour, minute, second, microsecond) do
-    {date_to_rata_die_days(year, month, day),
-     time_to_day_fraction(hour, minute, second, microsecond)}
+  def naive_datetime_to_iso_days(year, month, day, hour, minute, second, microsecond) do
+    {date_to_iso_days(year, month, day), time_to_day_fraction(hour, minute, second, microsecond)}
   end
 
   @doc """
-  Converts `t:rata_die` to the Calendar's datetime format.
+  Converts `t:iso_day` to the Calendar's datetime format.
   """
-  def naive_datetime_from_rata_die({days, day_fraction}) do
-    date = date_from_rata_die_days(days)
+  def naive_datetime_from_iso_days({days, day_fraction}) do
+    date = date_from_iso_days(days)
     {hour, minute, second, microsecond} = time_from_day_fraction(day_fraction)
     {date.year, date.month, date.day, hour, minute, second, microsecond}
   end
@@ -119,7 +141,7 @@ defmodule Calendrical.Calendar.Julian do
   Should return `true` if the given date describes a proper date in the calendar.
   """
   def valid_date?(year, month, day) do
-    (month in 1..12) and (day <= days_in_month(year, month)) and year <= 10_000
+    month in 1..12 and day <= days_in_month(year, month) and year <= 10_000
   end
 
   @doc """
@@ -130,9 +152,9 @@ defmodule Calendrical.Calendar.Julian do
   end
 
   @doc """
-  Converts a `year`, `month` and `day` into a rata die number of days.
+  Converts a `year`, `month` and `day` into a ISO number of days.
   """
-  def date_to_rata_die_days(year, month, day) do
+  def date_to_iso_days(year, month, day) do
     y =
       if year < 0 do
         year + 1
@@ -150,22 +172,20 @@ defmodule Calendrical.Calendar.Julian do
     # Number of non-leap days from the day before the start of the
     # Julian epoch and the last day before the start of the current
     # year
-    epoch_days() - 1 + (365 * (y - 1)) + Float.floor((y - 1) / 4) +
-
     # plus number of days in the prior months in the current year plus
     # the corresponding number of leap days
-    Float.floor((367 * month - 362) / 12) + correction +
-
     # and lastly the number of days since the start of the
     # current month
-    day |> trunc
+    (epoch_days() - 1 + 365 * (y - 1) + Float.floor((y - 1) / 4) +
+       Float.floor((367 * month - 362) / 12) + correction + day)
+    |> trunc
   end
 
   @doc """
   Converts a rata die into a `%Date{}`
   """
-  def date_from_rata_die_days(days) do
-    approx = Float.floor(((4 * (days - epoch_days())) + 1464) / 1461) |> trunc
+  def date_from_iso_days(days) do
+    approx = Float.floor((4 * (days - epoch_days()) + 1464) / 1461) |> trunc
 
     year =
       if approx <= 0 do
@@ -176,15 +196,15 @@ defmodule Calendrical.Calendar.Julian do
 
     correction =
       cond do
-        days < date_to_rata_die_days(year, 3, 1) -> 0
+        days < date_to_iso_days(year, 3, 1) -> 0
         leap_year?(year) -> 1
         true -> 2
       end
 
-    prior_days = days - date_to_rata_die_days(year, 1, 1)
+    prior_days = days - date_to_iso_days(year, 1, 1)
 
     month = Float.floor((12 * (prior_days + correction) + 373) / 367) |> trunc
-    day = days - date_to_rata_die_days(year, month, 1) + 1
+    day = days - date_to_iso_days(year, month, 1) + 1
     {:ok, date} = Date.new(year, month, day, __MODULE__)
     date
   end
