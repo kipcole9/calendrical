@@ -92,7 +92,7 @@ defmodule Calendrical.Kday do
   def kday_on_or_before(%Date{calendar: calendar} = date, k)
       when is_atom(k) or k in 1..7 do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> kday_on_or_before(day_cardinal(k))
     |> date_from_iso_days(calendar)
   end
@@ -142,7 +142,7 @@ defmodule Calendrical.Kday do
   def kday_on_or_after(%Date{calendar: calendar} = date, k)
       when is_atom(k) or k in 1..7 do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> kday_on_or_after(day_cardinal(k))
     |> date_from_iso_days(calendar)
   end
@@ -191,7 +191,7 @@ defmodule Calendrical.Kday do
   def kday_nearest(%Date{calendar: calendar} = date, k)
       when is_atom(k) or k in 1..7 do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> kday_nearest(day_cardinal(k))
     |> date_from_iso_days(calendar)
   end
@@ -240,7 +240,7 @@ defmodule Calendrical.Kday do
   def kday_before(%Date{calendar: calendar} = date, k)
       when is_atom(k) or k in 1..7 do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> kday_before(day_cardinal(k))
     |> date_from_iso_days(calendar)
   end
@@ -289,7 +289,7 @@ defmodule Calendrical.Kday do
   def kday_after(%Date{calendar: calendar} = date, k)
       when is_atom(k) or k in 1..7 do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> kday_after(day_cardinal(k))
     |> date_from_iso_days(calendar)
   end
@@ -343,7 +343,7 @@ defmodule Calendrical.Kday do
   def nth_kday(%Date{calendar: calendar} = date, n, k)
       when (is_atom(k) or k in 1..7) and is_integer(n) do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> nth_kday(n, day_cardinal(k))
     |> date_from_iso_days(calendar)
   end
@@ -396,7 +396,7 @@ defmodule Calendrical.Kday do
   def first_kday(%Date{calendar: calendar} = date, k)
       when is_atom(k) or k in 1..7 do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> first_kday(day_cardinal(k))
     |> date_from_iso_days(calendar)
   end
@@ -439,7 +439,7 @@ defmodule Calendrical.Kday do
   def last_kday(%Date{calendar: calendar} = date, k)
       when is_atom(k) or k in 1..7 do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> last_kday(day_cardinal(k))
     |> date_from_iso_days(calendar)
   end
@@ -458,7 +458,7 @@ defmodule Calendrical.Kday do
 
   def day_of_week(%Date{} = date) do
     date
-    |> iso_days_from_date
+    |> date_to_iso_days
     |> day_of_week
   end
 

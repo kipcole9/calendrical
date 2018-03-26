@@ -30,7 +30,8 @@ defmodule Calendrical.Mixfile do
     [
       {:ex_doc, "~> 0.15", only: :dev},
       {:csv, "> 0.0.0", only: [:dev, :test], optional: true},
-      {:excoveralls, "~> 0.6.3", only: :test}
+      {:excoveralls, "~> 0.6.3", only: :test},
+      {:benchee, "~> 0.12", optional: true, only: :dev}
     ]
   end
 
