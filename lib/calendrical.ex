@@ -116,8 +116,7 @@ defmodule Calendrical do
 
   """
   def add(%{calendar: calendar} = date, n) do
-    {days, fraction} = date_to_iso_days(date)
-    date_from_iso_days({days + n, fraction}, calendar)
+    Date.add(date, n)
   end
 
   @doc """
@@ -131,7 +130,7 @@ defmodule Calendrical do
 
   """
   def sub(%{calendar: _calendar} = date, n) do
-    add(date, -n)
+    Date.add(date, -n)
   end
 
   @doc """
